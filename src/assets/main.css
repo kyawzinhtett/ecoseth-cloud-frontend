@@ -10,6 +10,8 @@ body {
 
 #app {
     font-family: 'Khula', sans-serif;
+    color: #ffffff;
+    background-color: #000000;
 }
 
 .header-text {

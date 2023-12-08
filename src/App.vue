@@ -1,18 +1,24 @@
 <template>
   <!-- Header -->
   <Header />
-  <!-- SideBar -->
-  <nav>
-    <RouterLink :to="{ name: 'home' }">Home</RouterLink>
-    <RouterLink :to="{ name: 'stake' }">Stake</RouterLink>
-  </nav>
+
+  <div class="grid grid-cols-12">
+    <!-- SideBar -->
+    <Sidebar />
+
+    <!-- Main -->
+    <main class="col-span-12 lg:col-span-10 px-4 bg-[#090909]">
+
+    </main>
+  </div>
 
   <RouterView />
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import Header from '@/components/Header.vue';
+import { RouterView } from 'vue-router'
+import Header from '@/components/Header.vue'
+import Sidebar from '@/components/Sidebar.vue'
 </script>
 
 <style scoped></style>
