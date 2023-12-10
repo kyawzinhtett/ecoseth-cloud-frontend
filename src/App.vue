@@ -2,17 +2,13 @@
   <!-- Header -->
   <Header />
 
-  <div class="grid grid-cols-12">
-    <!-- SideBar -->
+  <template class="grid grid-cols-12">
     <Sidebar />
 
-    <!-- Main -->
-    <main class="col-span-12 lg:col-span-10 px-4 bg-[#090909]">
-
+    <main class="col-span-12 lg:col-span-10 bg-[#090909] px-4 pt-9 mt-20 flex justify-center">
+      <RouterView />
     </main>
-  </div>
-
-  <RouterView />
+  </template>
 </template>
 
 <script setup>

@@ -28,6 +28,14 @@ body {
     }
 
     .btn-primary {
-        @apply py-2 px-8 bg-[#720059] text-white font-semibold rounded-lg shadow-md hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-[#5B0047] focus:ring-opacity-75;
+        @apply py-3 px-10 bg-[#720059] text-white font-semibold rounded-lg shadow-md hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-[#5B0047] focus:ring-opacity-75;
+    }
+
+    .text-gray {
+        @apply text-[#A6A6A6];
+    }
+
+    .text-purple {
+        @apply text-[#6600CC];
     }
 }
