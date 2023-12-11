@@ -5,14 +5,14 @@
   <template class="grid grid-cols-12">
     <template v-if="route.path !== '/wallet'">
       <Sidebar />
-      <main class="col-span-12 lg:col-span-10 bg-secondary px-12 pt-9 mt-20 h-screen">
+      <main class="col-span-12 lg:col-span-10 bg-secondary px-12 pt-9 mt-20 h-full">
         <RouterView />
       </main>
     </template>
   </template>
 
   <template v-if="route.path === '/wallet'">
-    <main class="bg-secondary px-12 pt-9 mt-10 h-screen">
+    <main class="bg-secondary px-12 pt-9 mt-10 h-full">
       <RouterView />
     </main>
   </template>
