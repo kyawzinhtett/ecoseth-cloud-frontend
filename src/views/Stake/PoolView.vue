@@ -1,8 +1,10 @@
 <template>
-    <section class="flex justify-end items-center gap-2 mb-6">
-        <p>Wallet</p>
-        <Button class="btn-primary px-2 py-1 text-white" icon="pi pi-wallet" aria-label="Wallet" />
-    </section>
+    <router-link :to="{ name: 'wallet' }">
+        <section class="flex justify-end items-center gap-2 mb-6">
+            <p>Wallet</p>
+            <Button class="btn-primary px-2 py-1 text-white" icon="pi pi-wallet" aria-label="Wallet" />
+        </section>
+    </router-link>
     <section class="flex justify-between mb-5">
         <h1 class="text-xl font-semibold mb-3">Pool</h1>
         <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..." class="px-3" />
@@ -19,11 +21,11 @@
     </section>
     <section class="mb-5">
         <div class="flex items-center gap-3 mb-3">
-            <img src="/Ellipse.svg" alt="Ellipse" class="w-[50px]">
+            <img src="/ellipse.svg" alt="Ellipse" class="w-[50px]">
             <p>USDT</p>
         </div>
         <div class="flex items-center gap-3 mb-2">
-            <InputText type="text" v-model="value" class="bg-secondary border border-gray-700 w-1/3 py-4" />
+            <InputText type="text" class="bg-secondary border border-gray-700 w-1/3 py-4" />
             <Button label="Max" class="btn-outline" />
         </div>
         <p class="text-xs">

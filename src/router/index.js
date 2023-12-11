@@ -17,6 +17,11 @@ const router = createRouter({
             path: '/pool',
             name: 'pool',
             component: () => import('@/views/Stake/PoolView.vue')
+        },
+        {
+            path: '/wallet',
+            name: 'wallet',
+            component: () => import('@/views/Stake/WalletView.vue')
         }
     ]
 })
