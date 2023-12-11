@@ -5,7 +5,7 @@
   <template class="grid grid-cols-12">
     <Sidebar />
 
-    <main class="col-span-12 lg:col-span-10 bg-[#090909] px-4 pt-9 mt-20 flex justify-center">
+    <main class="col-span-12 lg:col-span-10 bg-secondary px-12 pt-9 mt-20">
       <RouterView />
     </main>
   </template>

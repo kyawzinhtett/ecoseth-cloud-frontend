@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/Home/HomeView.vue'
-import StakeView from '@/views/Stake/StakeView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,13 +6,18 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: HomeView
+            component: () => import('@/views/Home/HomeView.vue')
         },
         {
             path: '/stake',
             name: 'stake',
-            component: StakeView
+            component: () => import('@/views/Stake/StakeView.vue')
         },
+        {
+            path: '/pool',
+            name: 'pool',
+            component: () => import('@/views/Stake/PoolView.vue')
+        }
     ]
 })
 
