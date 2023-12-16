@@ -1,5 +1,5 @@
 <template>
-    <aside class="hidden lg:block col-span-2 pt-6 mt-20 h-screen">
+    <aside class="hidden lg:block col-span-2 pt-7 mt-16 h-screen">
         <ul>
             <router-link :to="{ name: 'home' }">
                 <li class="flex justify-center py-5 rounded-md mb-10">

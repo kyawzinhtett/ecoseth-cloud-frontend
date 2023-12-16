@@ -33,7 +33,7 @@ body {
     }
 
     .bg-gradient {
-        @apply bg-gradient-to-b from-[#5B0047] to-[#000000];
+        @apply bg-gradient-to-b from-[#5B0047] to-[#090909];
     }
 
     .btn-primary {
