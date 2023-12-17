@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="h-screen">
         <section class="mt-8">
             <router-link :to="{ name: 'home' }">
                 <span class="text-gray">Home&nbsp;</span>
@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div v-if="isMetamaskSupported" class="col-span-12 lg:col-span-6 hover:cursor-pointer">
-                <div @click="connectWallet('metamask')" class="bg-tertiary rounded-md flex justify-between items-center px-10 py-5">
+                <div @click="connectWallet" class="bg-tertiary rounded-md flex justify-between items-center px-10 py-5">
                     <span class="text-2xl">Metamask</span>
                     <img src="/metamask.svg" alt="Metamask" class="w-[50px]">
                 </div>
@@ -61,92 +61,35 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-// import { Router } from 'vue-router';
+import { useRouter } from 'vue-router';
+import { useStore } from '@/store/store.js'
 
 const depositAmount = ref(0)
 const walletAddress = ref('')
 const balance = ref(0)
 const depositTimestamp = ref(0)
 const isMetamaskSupported = ref(false)
-// const router = new Router()
+const router = new useRouter()
+const store = new useStore()
 
 onMounted(() => {
     isMetamaskSupported.value = window.ethereum != 'undefined'
 })
 
-const connectWallet = async (provider) => {
+const connectWallet = async () => {
     try {
-        // Request account access if needed
-        window.ethereum.request({ method: 'eth_requestAccounts' })
-        console.log('Wallet connected with', provider)
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-        const userAddress = accounts[0]
+        const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+        })
+        walletAddress.value = accounts[0]
 
-        // router.push({ name: 'pool', params: {
-        //     walletAddress: userAddress
-        // }})
+        console.log(`Wallet Address: ${walletAddress.value}`)
 
-        console.log(userAddress)
+        store.setWalletAddress(walletAddress.value)
+
+        router.push({ name: 'pool' })
     } catch (error) {
         console.error('Error connecting wallet:', error)
-    }
-}
-
-const depositToContract = async () => {
-    try {
-        // Ensure the user has connected their wallet
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-        const userAddress = accounts[0]
-
-        // Call the deposit function on the contract
-        // Replace with your contract ABI and address
-        const contractABI = import.meta.env.VITE_CONTRACT_ABI
-        const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
-        const contract = new ethers.Contract(contractAddress, contractABI, window.ethereum)
-
-        await contract.deposit(depositAmount.value)
-
-        console.log('Deposit successful!')
-    } catch (error) {
-        console.error('Error depositing to contract:', error)
-    }
-}
-
-const getBalances = async () => {
-    try {
-        // Ensure the user has connected their wallet
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-        const userAddress = accounts[0]
-
-        // Call the balances mapping in the contract
-        // Replace with your contract ABI and address
-        const contractABI = import.meta.env.VITE_CONTRACT_ABI
-        const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
-        const contract = new ethers.Contract(contractAddress, contractABI, window.ethereum)
-
-        // Call the balances mapping in the contract
-        balance.value = await contract.balances(userAddress)
-    } catch (error) {
-        console.error('Error fetching balances:', error)
-    }
-}
-
-const getDepositTimestamps = async () => {
-    try {
-        // Ensure the user has connected their wallet
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-        const userAddress = accounts[0]
-
-        // Call the depositTimestamps mapping in the contract
-        // Replace with your contract ABI and address
-        const contractABI = import.meta.env.VITE_CONTRACT_ABI
-        const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
-        const contract = new ethers.Contract(contractAddress, contractABI, window.ethereum)
-
-        // Call the depositTimestamps mapping in the contract
-        depositTimestamp.value = await contract.depositTimestamps(userAddress)
-    } catch (error) {
-        console.error('Error fetching deposit timestamps:', error)
     }
 }
 </script>
