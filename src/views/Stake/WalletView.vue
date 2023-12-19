@@ -64,10 +64,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import { useStore } from '@/store/store.js'
 
-const depositAmount = ref(0)
 const walletAddress = ref('')
-const balance = ref(0)
-const depositTimestamp = ref(0)
 const isMetamaskSupported = ref(false)
 const router = new useRouter()
 const store = new useStore()
@@ -82,8 +79,6 @@ const connectWallet = async () => {
             method: 'eth_requestAccounts'
         })
         walletAddress.value = accounts[0]
-
-        console.log(`Wallet Address: ${walletAddress.value}`)
 
         store.setWalletAddress(walletAddress.value)
 
