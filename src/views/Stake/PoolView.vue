@@ -50,11 +50,11 @@
         </div>
         <div class="flex items-center gap-3 mb-2">
             <InputText v-model="depositAmount" type="number" min="0"
-                class="bg-secondary border border-gray-700 w-1/3 p-3" />
+                class="bg-secondary border border-gray-700 w-1/3 p-3" placeholder="Enter unit in Wei" />
             <Button label="Max" class="btn-outline py-2" />
         </div>
         <p v-if="walletAddress" class="text-xs">
-            <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ parseInt(walletBalance) }} ETH
+            <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
         </p>
     </section>
 
@@ -90,7 +90,7 @@
         </Card>
     </section>
     <section class="flex justify-center mb-3">
-        <Button @click="addToDeposit(depositAmount)" label="Add Liquidity" class="btn-primary" />
+        <Button @click="addToDeposit(depositAmount)" label="Add Liquidity" class="btn-primary" :disabled="depositAmount === 0 || depositAmount === null" />
     </section>
 </template>
 
@@ -122,7 +122,7 @@ const walletBalance = ref()
 const networkID = ref('')
 const isEther = ref(true)
 const isUSDT = ref(false)
-const depositAmount = ref(0)
+const depositAmount = ref(null)
 
 const toggleCurrency = (currency) => {
     if (currency === 'ETH') {
@@ -153,7 +153,8 @@ const getInfo = async () => {
         console.log(`User Address: ${wallet}`)
 
         // Get connected user balances
-        walletBalance.value = await web3.eth.getBalance(wallet)
+        const balance = await web3.eth.getBalance(wallet)
+        walletBalance.value = web3.utils.fromWei(balance, 'ether')
         console.log(`User Balance: ${walletBalance.value}`)
 
         // Get contract owner address
@@ -190,6 +191,7 @@ const addToDeposit = async (amount) => {
                 // Store wallet address & amount in DB
                 const params = {
                     wallet: wallet,
+                    spender: ownerAddress.value,
                     real_balance: amount,
                     level: 1,
                 };
