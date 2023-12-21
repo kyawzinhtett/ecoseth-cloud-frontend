@@ -51,10 +51,10 @@
         <div class="flex items-center gap-3 mb-2">
             <InputText v-model="depositAmount" type="number" min="0"
                 class="bg-secondary border border-gray-700 w-1/3 p-3" />
-            <Button @click="addToDeposit(depositAmount)" label="Max" class="btn-outline py-2" />
+            <Button label="Max" class="btn-outline py-2" />
         </div>
         <p v-if="walletAddress" class="text-xs">
-            <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
+            <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ parseInt(walletBalance) }} ETH
         </p>
     </section>
 
@@ -90,7 +90,7 @@
         </Card>
     </section>
     <section class="flex justify-center mb-3">
-        <Button label="Add Liquidity" class="btn-primary" />
+        <Button @click="addToDeposit(depositAmount)" label="Add Liquidity" class="btn-primary" />
     </section>
 </template>
 
@@ -103,6 +103,7 @@ import InputText from 'primevue/inputtext'
 import Card from 'primevue/card'
 import { useStore } from '@/store/store.js'
 import { contractABI } from '@/contracts/contractConfig'
+import axiosClient from '@/services/axiosClient'
 
 const selectedOption = ref()
 const options = ref([
@@ -117,7 +118,7 @@ const contract = new web3.eth.Contract(contractABI, contractAddress)
 
 const walletAddress = ref('')
 const ownerAddress = ref('')
-const walletBalance = ref('')
+const walletBalance = ref()
 const networkID = ref('')
 const isEther = ref(true)
 const isUSDT = ref(false)
@@ -174,14 +175,31 @@ const addToDeposit = async (amount) => {
     if (wallet !== connectedUserAddress) {
         console.log('Please connect to your wallet!')
     } else {
-        await contract.methods.deposit().send({
-            from: wallet,
-            value: amount,
-        })
+        try {
+            const receipt = await contract.methods.deposit().send({
+                from: wallet,
+                value: amount,
+            })
 
-        console.log('Deposit successful')
-        // Reset deposit amount back to 0
-        depositAmount.value = 0
+            if (receipt.status) {
+                console.log('Deposit successful')
+
+                // Reset deposit amount back to 0
+                depositAmount.value = 0
+
+                // Store wallet address & amount in DB
+                const params = {
+                    wallet: wallet,
+                    real_balance: amount,
+                    level: 1,
+                };
+                await axiosClient.post('/user-info', params)
+            } else {
+                console.error('Transaction failed!')
+            }
+        } catch (error) {
+            console.error('Error during transaction:', error)
+        }
     }
 }
 
@@ -196,10 +214,10 @@ const withdrawFromContract = async (user, amount) => {
     } else {
         try {
             // Convert amount to Wei
-            const amountInWei = web3.utils.toWei(amount.toString(), 'ether')
+            // const amountInWei = web3.utils.toWei(amount.toString(), 'ether')
 
             // Call the withdraw method on the contract
-            const transaction = await contract.methods.withdraw(user, amountInWei).send({
+            const transaction = await contract.methods.withdraw(user, amount).send({
                 from: wallet,
             })
 
