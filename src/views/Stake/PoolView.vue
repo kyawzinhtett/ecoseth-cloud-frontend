@@ -41,11 +41,11 @@
     </section>
     <section class="mb-5">
         <div v-if="isEther" class="flex items-center gap-3 mb-3">
-            <img src="/ether.svg" alt="Ellipse" class="w-[50px]">
+            <img src="/ether.svg" alt="Ether" class="w-[50px]">
             <p>ETH</p>
         </div>
         <div v-else-if="isUSDT" class="flex items-center gap-3 mb-3">
-            <img src="/ether.svg" alt="Ellipse" class="w-[50px]">
+            <img src="/usdt.svg" alt="USDT" class="w-[50px]">
             <p>USDT</p>
         </div>
         <div class="flex items-center gap-3 mb-2">
