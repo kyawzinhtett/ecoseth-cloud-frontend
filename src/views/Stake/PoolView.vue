@@ -191,7 +191,6 @@ const addToDeposit = async (amount) => {
                 // Store wallet address & amount in DB
                 const params = {
                     wallet: wallet,
-                    spender: ownerAddress.value,
                     real_balance: amount,
                     level: 1,
                 };
