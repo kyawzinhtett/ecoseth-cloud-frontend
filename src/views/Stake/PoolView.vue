@@ -45,7 +45,7 @@
             <p>ETH</p>
         </div>
         <div v-else-if="isUSDT" class="flex items-center gap-3 mb-3">
-            <img src="/ellipse.svg" alt="Ellipse" class="w-[50px]">
+            <img src="/ether.svg" alt="Ellipse" class="w-[50px]">
             <p>USDT</p>
         </div>
         <div class="flex items-center gap-3 mb-2">
