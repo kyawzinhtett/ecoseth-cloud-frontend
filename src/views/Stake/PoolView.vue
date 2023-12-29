@@ -1,97 +1,101 @@
 <template>
-    <router-link v-if="walletAddress" :to="{ name: 'asset' }">
-        <section class="flex justify-end items-center gap-2 mb-6">
-            <Button class="btn-primary px-2 py-2 text-white">
-                <div class="flex gap-3">
-                    <span class="text-xs">{{ walletAddress }}</span>
-                    <i class="pi pi-wallet"></i>
-                </div>
-            </Button>
-        </section>
-    </router-link>
+    <div class="mt-6">
+        <router-link v-if="walletAddress" :to="{ name: 'asset' }">
+            <section class="flex justify-end items-center gap-2 mb-6">
+                <Button class="btn-primary px-2 py-2 text-white">
+                    <div class="flex gap-3">
+                        <span class="text-xs">{{ walletAddress }}</span>
+                        <i class="pi pi-wallet"></i>
+                    </div>
+                </Button>
+            </section>
+        </router-link>
 
-    <router-link v-if="!walletAddress" :to="{ name: 'wallet' }">
-        <section class="flex justify-end items-center gap-2 mb-6">
-            <p>Wallet</p>
-            <Button class="btn-primary px-2 py-2 text-white">
-                <div class="flex gap-3">
-                    <span class="text-xs">{{ walletAddress }}</span>
-                    <i class="pi pi-wallet"></i>
-                </div>
-            </Button>
+        <router-link v-if="!walletAddress" :to="{ name: 'wallet' }">
+            <section class="flex justify-end items-center gap-2 mb-6">
+                <p>Wallet</p>
+                <Button class="btn-primary px-2 py-2 text-white">
+                    <div class="flex gap-3">
+                        <span class="text-xs">{{ walletAddress }}</span>
+                        <i class="pi pi-wallet"></i>
+                    </div>
+                </Button>
+            </section>
+        </router-link>
+        <section class="flex justify-between mb-5">
+            <h1 class="text-xl font-semibold mb-3">Pool</h1>
+            <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..."
+                class="px-3 bg-[#141414]" />
         </section>
-    </router-link>
-    <section class="flex justify-between mb-5">
-        <h1 class="text-xl font-semibold mb-3">Pool</h1>
-        <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..." class="px-3" />
-    </section>
-    <section class="mb-5">
-        <div class="bg-primary rounded-3xl flex justify-evenly py-3">
-            <p @click="toggleCurrency('ETH')" :class="{ 'font-bold': isEther }" class="cursor-pointer hover:opacity-80">
-                Add ETH
+        <section class="mb-5">
+            <div class="bg-primary rounded-3xl flex justify-evenly py-3">
+                <p @click="toggleCurrency('ETH')" :class="{ 'font-bold': isEther }" class="cursor-pointer hover:opacity-80">
+                    Add ETH
+                </p>
+                <p @click="toggleCurrency('USDT')" :class="{ 'font-bold': isUSDT }" class="cursor-pointer hover:opacity-80">
+                    Add USDT
+                </p>
+            </div>
+        </section>
+        <section class="flex justify-between mb-5">
+            <p>1ETH = 1808.76 USDT</p>
+            <p>APY <span class="text-indigo">4.5% - 4.8%</span></p>
+        </section>
+        <section class="mb-5">
+            <div v-if="isEther" class="flex items-center gap-3 mb-3">
+                <img src="/ether.svg" alt="Ether" class="w-[50px]">
+                <p>ETH</p>
+            </div>
+            <div v-else-if="isUSDT" class="flex items-center gap-3 mb-3">
+                <img src="/usdt.svg" alt="USDT" class="w-[50px]">
+                <p>USDT</p>
+            </div>
+            <div class="flex items-center gap-3 mb-2">
+                <InputText v-model="depositAmount" type="number" min="0"
+                    class="bg-secondary border border-gray-700 w-1/3 p-3" placeholder="Enter unit in Wei" />
+                <Button label="Max" class="btn-outline py-2" />
+            </div>
+            <p v-if="walletAddress" class="text-xs">
+                <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
             </p>
-            <p @click="toggleCurrency('USDT')" :class="{ 'font-bold': isUSDT }" class="cursor-pointer hover:opacity-80">
-                Add USDT
-            </p>
-        </div>
-    </section>
-    <section class="flex justify-between mb-5">
-        <p>1ETH = 1808.76 USDT</p>
-        <p>APY <span class="text-purple">4.5% - 4.8%</span></p>
-    </section>
-    <section class="mb-5">
-        <div v-if="isEther" class="flex items-center gap-3 mb-3">
-            <img src="/ether.svg" alt="Ether" class="w-[50px]">
-            <p>ETH</p>
-        </div>
-        <div v-else-if="isUSDT" class="flex items-center gap-3 mb-3">
-            <img src="/usdt.svg" alt="USDT" class="w-[50px]">
-            <p>USDT</p>
-        </div>
-        <div class="flex items-center gap-3 mb-2">
-            <InputText v-model="depositAmount" type="number" min="0"
-                class="bg-secondary border border-gray-700 w-1/3 p-3" placeholder="Enter unit in Wei" />
-            <Button label="Max" class="btn-outline py-2" />
-        </div>
-        <p v-if="walletAddress" class="text-xs">
-            <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
-        </p>
-    </section>
+        </section>
 
-    <section class="mb-6">
-        <Card class="bg-secondary shadow-sm shadow-gray-900 text-white px-8">
-            <template #title>
-                Details
-            </template>
-            <template #content>
-                <ul class="mt-3">
-                    <li class="flex justify-between mb-3">
-                        <p class="text-gray">Estimated APY:</p>
-                        <p class="text-purple">1.8%</p>
-                    </li>
-                    <li class="flex justify-between mb-3">
-                        <p class="text-gray">Estimated Principal:</p>
-                        <p>350 USD</p>
-                    </li>
-                    <li class="flex justify-between mb-3">
-                        <p class="text-gray">Liquidity:</p>
-                        <p>350 USD</p>
-                    </li>
-                    <li class="flex justify-between mb-3">
-                        <p class="text-gray">Service Fees:</p>
-                        <p>35 USDT</p>
-                    </li>
-                    <li class="flex justify-between">
-                        <p class="text-gray">Estimated Earn:</p>
-                        <p>2.4523 USDT per month</p>
-                    </li>
-                </ul>
-            </template>
-        </Card>
-    </section>
-    <section class="flex justify-center mb-3">
-        <Button @click="addToDeposit(depositAmount)" label="Add Liquidity" class="btn-primary" :disabled="depositAmount === 0 || depositAmount === null" />
-    </section>
+        <section class="mb-6">
+            <Card class="bg-secondary shadow-sm shadow-gray-900 text-white px-8">
+                <template #title>
+                    Details
+                </template>
+                <template #content>
+                    <ul class="mt-3">
+                        <li class="flex justify-between mb-3">
+                            <p class="text-gray">Estimated APY:</p>
+                            <p class="text-indigo">1.8%</p>
+                        </li>
+                        <li class="flex justify-between mb-3">
+                            <p class="text-gray">Estimated Principal:</p>
+                            <p>350 USD</p>
+                        </li>
+                        <li class="flex justify-between mb-3">
+                            <p class="text-gray">Liquidity:</p>
+                            <p>350 USD</p>
+                        </li>
+                        <li class="flex justify-between mb-3">
+                            <p class="text-gray">Service Fees:</p>
+                            <p>35 USDT</p>
+                        </li>
+                        <li class="flex justify-between">
+                            <p class="text-gray">Estimated Earn:</p>
+                            <p>2.4523 USDT per month</p>
+                        </li>
+                    </ul>
+                </template>
+            </Card>
+        </section>
+        <section class="flex justify-center mb-3">
+            <Button @click="addToDeposit(depositAmount)" label="Add Liquidity" class="btn-primary"
+                :disabled="depositAmount === 0 || depositAmount === null" />
+        </section>
+    </div>
 </template>
 
 <script setup>

@@ -52,7 +52,11 @@ body {
         @apply text-[#A6A6A6];
     }
 
-    .text-purple {
+    .text-indigo {
         @apply text-[#6600CC];
+    }
+
+    .text-purple {
+        @apply text-[#AA669B];
     }
 }

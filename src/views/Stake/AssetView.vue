@@ -33,7 +33,7 @@
             <template #subtitle>
                 <div class="flex justify-between">
                     <h1 class="text-white text-lg font-bold mx-12 pt-3">ETH/USDT</h1>
-                    <p class="text-xs">APY <span class="text-purple">8%</span></p>
+                    <p class="text-xs">APY <span class="text-indigo">8%</span></p>
                 </div>
             </template>
             <template #content>
@@ -62,7 +62,7 @@
                     </div>
                     <p class="mb-2 text-sm">Claimable</p>
                     <div class="flex gap-4 items-center">
-                        <p class="text-purple mr-6">3.793 USDT</p>
+                        <p class="text-indigo mr-6">3.793 USDT</p>
                         <button class="btn-primary text-sm">Claim</button>
                         <button class="btn-outline text-sm">Add</button>
                     </div>
@@ -74,7 +74,7 @@
             <template #subtitle>
                 <div class="flex justify-between">
                     <h1 class="text-white text-lg font-bold mx-12 pt-3">TRX/USDT</h1>
-                    <p class="text-xs">APY <span class="text-purple">8%</span></p>
+                    <p class="text-xs">APY <span class="text-indigo">8%</span></p>
                 </div>
             </template>
             <template #content>
@@ -103,7 +103,7 @@
                     </div>
                     <p class="mb-2 text-sm">Claimable</p>
                     <div class="flex gap-4 items-center">
-                        <p class="text-purple mr-6">3.793 USDT</p>
+                        <p class="text-indigo mr-6">3.793 USDT</p>
                         <button class="btn-primary text-sm">Claim</button>
                         <button class="btn-outline text-sm">Add</button>
                     </div>

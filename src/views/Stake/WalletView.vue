@@ -1,9 +1,9 @@
 <template>
     <div class="h-screen">
         <section class="mt-8">
-            <!-- <router-link :to="{ name: 'home' }">
-            </router-link> -->
-            <span class="text-gray">Home&nbsp;</span>
+            <router-link :to="{ name: 'home' }">
+                <span class="text-gray">Home&nbsp;</span>
+            </router-link>
             <router-link :to="{ name: 'stake' }">
                 <span class="text-gray">&nbsp;/&nbsp; Stake &nbsp; /</span>
             </router-link>

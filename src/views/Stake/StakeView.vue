@@ -1,6 +1,6 @@
 <template>
     <template class="flex justify-center">
-        <div>
+        <div class="mt-10">
             <h1 class="font-semibold mb-3">All Pools</h1>
             <div class="card flex items-center gap-10 mb-14">
                 <img class="w-[240px]" src="/image-1.png" alt="Ethereum Eth">
@@ -13,7 +13,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray mb-3">APY</p>
-                            <p class="font-bold text-2xl text-purple">4.5% - 4.8%</p>
+                            <p class="font-bold text-2xl text-indigo">4.5% - 4.8%</p>
                         </div>
                     </div>
                     <div class="bg-[#141414] rounded-3xl text-center px-28 py-3 mb-6">
@@ -35,7 +35,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray mb-3">APY</p>
-                            <p class="font-bold text-2xl text-purple">3.5% - 4.0%</p>
+                            <p class="font-bold text-2xl text-indigo">3.5% - 4.0%</p>
                         </div>
                     </div>
                     <div class="bg-[#141414] rounded-3xl text-center px-28 py-3 mb-6">

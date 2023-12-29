@@ -3,13 +3,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
-        // {
-        //     path: '/',
-        //     name: 'home',
-        //     component: () => import('@/views/Home/HomeView.vue')
-        // },
         {
             path: '/',
+            name: 'home',
+            component: () => import('@/views/Home/HomeView.vue')
+        },
+        {
+            path: '/stake',
             name: 'stake',
             component: () => import('@/views/Stake/StakeView.vue')
         },
