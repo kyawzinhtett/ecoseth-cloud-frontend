@@ -27,6 +27,11 @@ const router = createRouter({
             path: '/asset',
             name: 'asset',
             component: () => import('@/views/Stake/AssetView.vue')
+        },
+        {
+            path: '/claim',
+            name: 'claim',
+            component: () => import('@/views/Stake/ClaimView.vue')
         }
     ]
 })

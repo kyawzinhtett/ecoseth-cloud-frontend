@@ -22,9 +22,9 @@
                         <span class="text-xs">Claimable</span>
                         <p class="text-white">4.8931 USDT</p>
                     </div>
-                    <div>
+                    <router-link :to="{ name: 'claim' }">
                         <button class="btn-primary px-5 text-sm">Claim All</button>
-                    </div>
+                    </router-link>
                 </div>
             </template>
         </Card>
@@ -63,7 +63,9 @@
                     <p class="mb-2 text-sm">Claimable</p>
                     <div class="flex gap-4 items-center">
                         <p class="text-indigo mr-6">3.793 USDT</p>
-                        <button class="btn-primary text-sm">Claim</button>
+                        <router-link :to="{ name: 'claim' }">
+                            <button class="btn-primary text-sm">Claim</button>
+                        </router-link>
                         <button class="btn-outline text-sm">Add</button>
                     </div>
                 </section>
@@ -104,7 +106,9 @@
                     <p class="mb-2 text-sm">Claimable</p>
                     <div class="flex gap-4 items-center">
                         <p class="text-indigo mr-6">3.793 USDT</p>
-                        <button class="btn-primary text-sm">Claim</button>
+                        <router-link :to="{ name: 'claim' }">
+                            <button class="btn-primary text-sm">Claim</button>
+                        </router-link>
                         <button class="btn-outline text-sm">Add</button>
                     </div>
                 </section>
