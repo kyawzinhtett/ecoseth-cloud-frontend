@@ -50,9 +50,14 @@
                 <img src="/usdt.svg" alt="USDT" class="w-[50px]">
                 <p>USDT</p>
             </div>
-            <div class="flex items-center gap-3 mb-2">
+            <div v-if="isEther" class="flex items-center gap-3 mb-2">
                 <InputText v-model="depositAmount" type="number" min="0"
                     class="bg-secondary border border-gray-700 w-1/3 p-3" placeholder="Enter unit in Wei" />
+                <Button label="Max" class="btn-outline py-2" />
+            </div>
+            <div v-else-if="isUSDT" class="flex items-center gap-3 mb-2">
+                <InputText v-model="usdtAmount" type="number" min="0"
+                    class="bg-secondary border border-gray-700 w-1/3 p-3" placeholder="Enter USDT" />
                 <Button label="Max" class="btn-outline py-2" />
             </div>
             <p v-if="walletAddress" class="text-xs">
@@ -91,9 +96,13 @@
                 </template>
             </Card>
         </section>
-        <section class="flex justify-center mb-3">
+        <section v-if="isEther" class="flex justify-center mb-3">
             <Button @click="addToDeposit(depositAmount)" label="Add Liquidity" class="btn-primary"
                 :disabled="depositAmount === 0 || depositAmount === null" />
+        </section>
+        <section v-if="isUSDT" class="flex justify-center mb-3">
+            <Button @click="depositUSDT(usdtAmount)" label="Add Liquidity" class="btn-primary"
+                :disabled="usdtAmount === 0 || usdtAmount === null" />
         </section>
     </div>
 </template>
@@ -127,6 +136,7 @@ const networkID = ref('')
 const isEther = ref(true)
 const isUSDT = ref(false)
 const depositAmount = ref(null)
+const usdtAmount = ref(null)
 
 const toggleCurrency = (currency) => {
     if (currency === 'ETH') {
@@ -181,7 +191,7 @@ const addToDeposit = async (amount) => {
         console.log('Please connect to your wallet!')
     } else {
         try {
-            const receipt = await contract.methods.deposit().send({
+            const receipt = await contract.methods.depositETH().send({
                 from: wallet,
                 value: amount,
             })
@@ -222,13 +232,55 @@ const withdrawFromContract = async (user, amount) => {
             // const amountInWei = web3.utils.toWei(amount.toString(), 'ether')
 
             // Call the withdraw method on the contract
-            const transaction = await contract.methods.withdraw(user, amount).send({
+            const transaction = await contract.methods.withdrawETH(user, amount).send({
                 from: wallet,
             })
 
             console.log('Withdrawal successful:', transaction)
         } catch (error) {
             console.error('Error withdrawing from contract:', error)
+        }
+    }
+}
+
+// Deposit USDT
+const depositUSDT = async (amount) => {
+    // Ensure the user has connected their wallet
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const connectedUserAddress = accounts[0];
+
+    if (wallet !== connectedUserAddress) {
+        console.log('Please connect to your wallet!');
+    } else {
+        try {
+            const transaction = await contract.methods.depositUSDT(amount).send({
+                from: wallet,
+            });
+
+            console.log('USDT Deposit successful:', transaction);
+        } catch (error) {
+            console.error('Error during USDT deposit:', error);
+        }
+    }
+}
+
+// Withdraw USDT
+const withdrawUSDT = async (user, amount) => {
+    // Ensure the user has connected their wallet
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const connectedUserAddress = accounts[0];
+
+    if (wallet !== connectedUserAddress) {
+        console.log('Please connect to your wallet!');
+    } else {
+        try {
+            const transaction = await contract.methods.withdrawUSDT(user, amount).send({
+                from: wallet,
+            });
+
+            console.log('USDT Withdrawal successful:', transaction);
+        } catch (error) {
+            console.error('Error during USDT withdrawal:', error);
         }
     }
 }
