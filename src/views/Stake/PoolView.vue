@@ -97,7 +97,7 @@
             </Card>
         </section>
         <section v-if="isEther" class="flex justify-center mb-3">
-            <Button @click="addToDeposit(depositAmount)" label="Add Liquidity" class="btn-primary"
+            <Button @click="depositETH(depositAmount)" label="Add Liquidity" class="btn-primary"
                 :disabled="depositAmount === 0 || depositAmount === null" />
         </section>
         <section v-if="isUSDT" class="flex justify-center mb-3">
@@ -181,8 +181,8 @@ const getInfo = async () => {
     }
 }
 
-// Deposit
-const addToDeposit = async (amount) => {
+// Deposit Eth
+const depositETH = async (amount) => {
     // Ensure the user has connected their wallet
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     const connectedUserAddress = accounts[0]
@@ -218,8 +218,8 @@ const addToDeposit = async (amount) => {
     }
 }
 
-// Withdraw from user
-const withdrawFromContract = async (user, amount) => {
+// Withdraw Eth
+const withdrawETH = async (user, amount) => {
     // Ensure the user has connected their wallet
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     const connectedUserAddress = accounts[0]
@@ -258,6 +258,9 @@ const depositUSDT = async (amount) => {
             });
 
             console.log('USDT Deposit successful:', transaction);
+
+            // Reset deposit amount back to 0
+            usdtAmount.value = 0
         } catch (error) {
             console.error('Error during USDT deposit:', error);
         }
