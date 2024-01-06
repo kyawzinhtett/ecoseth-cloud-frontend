@@ -16,7 +16,11 @@
                     About Us
                 </li>
             </router-link>
-            <li class="flex justify-center py-5 rounded-md mb-10">Support</li>
+            <router-link :to="{ name: 'support' }">
+                <li :class="{ 'bg-primary': activeRoute === 'support' }" class="flex justify-center py-5 rounded-md mb-10">
+                    Support
+                </li>
+            </router-link>
         </ul>
     </aside>
 </template>
