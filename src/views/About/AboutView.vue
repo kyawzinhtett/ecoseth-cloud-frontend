@@ -1,6 +1,6 @@
 <template>
     <div class="px-8 py-10">
-        <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-4 mb-3">Who we are?</h1>
+        <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-4 mb-3">Who We Are?</h1>
 
         <div class="p-5 mb-4">
             <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloribus incidunt exercitationem deleniti
