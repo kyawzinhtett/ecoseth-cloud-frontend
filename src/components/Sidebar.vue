@@ -11,7 +11,11 @@
                     Stake
                 </li>
             </router-link>
-            <li class="flex justify-center py-5 rounded-md mb-10">About us</li>
+            <router-link :to="{ name: 'about' }">
+                <li :class="{ 'bg-primary': activeRoute === 'about' }" class="flex justify-center py-5 rounded-md mb-10">
+                    About Us
+                </li>
+            </router-link>
             <li class="flex justify-center py-5 rounded-md mb-10">Support</li>
         </ul>
     </aside>

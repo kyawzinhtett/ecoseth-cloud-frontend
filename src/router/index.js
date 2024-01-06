@@ -32,6 +32,11 @@ const router = createRouter({
             path: '/claim',
             name: 'claim',
             component: () => import('@/views/Stake/ClaimView.vue')
+        },
+        {
+            path: '/about',
+            name: 'about',
+            component: () => import('@/views/About/AboutView.vue')
         }
     ]
 })
