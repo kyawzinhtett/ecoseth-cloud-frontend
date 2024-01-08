@@ -85,8 +85,8 @@ const router = new useRouter()
 const store = new useStore()
 
 onMounted(() => {
-    isMetamaskSupported.value = window.ethereum != 'undefined' && window.ethereum.isMetaMask
-    isTrustWalletSupported.value = window.BinanceChain !== 'undefined' && window.BinanceChain.isTrustWallet && !window.BinanceChain.isMetaMask
+    isMetamaskSupported.value = window.ethereum != 'undefined'
+    isTrustWalletSupported.value = window.BinanceChain !== 'undefined'
 })
 
 const connectWallet = async () => {
