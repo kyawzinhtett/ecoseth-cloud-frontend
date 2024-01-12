@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-6">
+    <div class="mt-6 text-sm md:text-base">
         <router-link v-if="walletAddress" :to="{ name: 'asset' }">
             <section class="flex justify-end items-center gap-2 mb-6">
                 <Button class="btn-primary px-2 py-2 text-white">
@@ -22,42 +22,45 @@
                 </Button>
             </section>
         </router-link>
-        <section class="flex justify-between mb-5">
-            <h1 class="text-xl font-semibold mb-3">Pool</h1>
-            <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..."
-                class="px-3 bg-[#141414]" />
+        <section class="flex justify-between items-center mb-5">
+            <h1 class="text-lg md:text-xl font-semibold mb-3">Pool</h1>
+            <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..." class="md:px-3 bg-[#141414]" />
         </section>
         <section class="mb-5">
             <div class="bg-primary rounded-3xl flex justify-evenly py-3">
-                <p @click="toggleCurrency('ETH')" :class="{ 'font-bold': isEther }" class="cursor-pointer hover:opacity-80">
+                <p @click="toggleCurrency('ETH')" :class="{ 'font-semibold': isEther }"
+                    class="cursor-pointer hover:opacity-80">
                     Add ETH
                 </p>
-                <p @click="toggleCurrency('USDT')" :class="{ 'font-bold': isUSDT }" class="cursor-pointer hover:opacity-80">
+                <p @click="toggleCurrency('USDT')" :class="{ 'font-semibold': isUSDT }"
+                    class="cursor-pointer hover:opacity-80">
                     Add USDT
                 </p>
             </div>
         </section>
-        <section class="flex justify-between mb-5">
+        <section class="flex justify-between mb-5 text-sm md:text-base">
             <p>1ETH = 1808.76 USDT</p>
             <p>APY <span class="text-indigo">4.5% - 4.8%</span></p>
         </section>
         <section class="mb-5">
             <div v-if="isEther" class="flex items-center gap-3 mb-3">
-                <img src="/ether.svg" alt="Ether" class="w-[50px]">
+                <img src="/ether.svg" alt="Ether" class="w-[50px] h-[50px]">
                 <p>ETH</p>
             </div>
             <div v-else-if="isUSDT" class="flex items-center gap-3 mb-3">
-                <img src="/usdt.svg" alt="USDT" class="w-[50px]">
+                <img src="/usdt.svg" alt="USDT" class="w-[50px] h-[50px]">
                 <p>USDT</p>
             </div>
-            <div v-if="isEther" class="flex items-center gap-3 mb-2">
+            <div v-if="isEther" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="depositAmount" type="number" min="0"
-                    class="bg-secondary border border-gray-700 w-1/3 p-3" placeholder="Enter unit in Wei" />
+                    class="bg-secondary border border-gray-700 w-full md:w-1/2 lg:w-1/3 p-3 mb-3"
+                    placeholder="Enter unit in Wei" />
                 <Button label="Max" class="btn-outline py-2" />
             </div>
-            <div v-else-if="isUSDT" class="flex items-center gap-3 mb-2">
+            <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="usdtAmount" type="number" min="0"
-                    class="bg-secondary border border-gray-700 w-1/3 p-3" placeholder="Enter USDT" />
+                    class="bg-secondary border border-gray-700 w-full md:w-1/2 lg:w-1/3 p-3 mb-3"
+                    placeholder="Enter USDT" />
                 <Button label="Max" class="btn-outline py-2" />
             </div>
             <p v-if="walletAddress" class="text-xs">
@@ -66,12 +69,12 @@
         </section>
 
         <section class="mb-6">
-            <Card class="bg-secondary shadow-sm shadow-gray-900 text-white px-8">
+            <Card class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
                 <template #title>
                     Details
                 </template>
                 <template #content>
-                    <ul class="mt-3">
+                    <ul class="mt-3 text-sm md:text-base">
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated APY:</p>
                             <p class="text-indigo">1.8%</p>
@@ -97,11 +100,11 @@
             </Card>
         </section>
         <section v-if="isEther" class="flex justify-center mb-3">
-            <Button @click="depositETH(depositAmount)" label="Add Liquidity" class="btn-primary"
+            <Button @click="depositETH(depositAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
                 :disabled="depositAmount === 0 || depositAmount === null" />
         </section>
         <section v-if="isUSDT" class="flex justify-center mb-3">
-            <Button @click="depositUSDT(usdtAmount)" label="Add Liquidity" class="btn-primary"
+            <Button @click="depositUSDT(usdtAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
                 :disabled="usdtAmount === 0 || usdtAmount === null" />
         </section>
     </div>
