@@ -1,6 +1,6 @@
 <template>
-    <div class="px-8 py-10">
-        <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-3 mb-3">Reward Description</h1>
+    <div class="md:px-8 py-10 text-sm md:text-base">
+        <h1 class="bg-tertiary md:text-xl font-semibold rounded px-5 py-3 mb-3">Reward Description</h1>
 
         <ul class="p-5 list-decimal mb-3">
             <li class="mb-6">
@@ -29,13 +29,13 @@
             </li>
         </ul>
 
-        <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-3 mb-5">How to withdraw revenue?</h1>
+        <h1 class="bg-tertiary md:text-xl font-semibold rounded px-5 py-3 mb-5">How to withdraw revenue?</h1>
 
-        <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-3 mb-5">Reward activities</h1>
+        <h1 class="bg-tertiary md:text-xl font-semibold rounded px-5 py-3 mb-5">Reward activities</h1>
 
-        <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-3 mb-5">Service fees</h1>
+        <h1 class="bg-tertiary md:text-xl font-semibold rounded px-5 py-3 mb-5">Service fees</h1>
 
-        <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-3">How to activate to get daily rewards?</h1>
+        <h1 class="bg-tertiary md:text-xl font-semibold rounded px-5 py-3">How to activate to get daily rewards?</h1>
     </div>
 </template>
 
