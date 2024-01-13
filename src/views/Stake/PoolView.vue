@@ -74,7 +74,7 @@
                     Details
                 </template>
                 <template #content>
-                    <ul class="mt-3 text-sm md:text-base">
+                    <ul class="mt-3 text-xs md:text-base">
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated APY:</p>
                             <p class="text-indigo">1.8%</p>
