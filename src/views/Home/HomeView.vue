@@ -3,13 +3,13 @@
         <Card class="bg-secondary">
             <template #content>
                 <section>
-                    <div class="flex justify-between md:justify-center md:gap-60 text-white">
-                        <div class="leading-10">
+                    <div class="md:flex justify-between md:justify-center md:gap-60 text-white">
+                        <div class="md:leading-10 mb-3">
                             <h5>Total Participants</h5>
                             <span class="text-purple text-xl font-bold">27,687,1185</span>
                         </div>
 
-                        <div class="leading-10">
+                        <div class="md:leading-10 mb-3">
                             <h5>Total Participants</h5>
                             <span class="text-purple text-xl font-bold">27,687,1185</span>
                         </div>

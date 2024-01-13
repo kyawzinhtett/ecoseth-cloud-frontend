@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-6 text-sm md:text-base">
+    <div class="mt-4 text-sm md:text-base">
         <router-link v-if="walletAddress" :to="{ name: 'asset' }">
             <section class="flex justify-end items-center gap-2 mb-6">
                 <Button class="btn-primary px-2 py-2 text-white">

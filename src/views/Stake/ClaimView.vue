@@ -1,13 +1,13 @@
 <template>
-    <div class="h-screen mt-10">
+    <div class="h-screen mt-6">
         <div class="bg-primary rounded-3xl flex justify-evenly py-3 w-full md:w-1/2 mb-8">
-            <p @click="toggleCurrency('BSC')" :class="{ 'font-bold': isBSC }" class="cursor-pointer hover:opacity-80">
+            <p @click="toggleCurrency('BSC')" :class="{ 'font-bold': isBSC }" class="cursor-pointer hover:opacity-80 text-xs md:text-base">
                 BSC
             </p>
-            <p @click="toggleCurrency('ERC')" :class="{ 'font-bold': isERC }" class="cursor-pointer hover:opacity-80">
+            <p @click="toggleCurrency('ERC')" :class="{ 'font-bold': isERC }" class="cursor-pointer hover:opacity-80 text-xs md:text-base">
                 ERC
             </p>
-            <p @click="toggleCurrency('AVAX')" :class="{ 'font-bold': isAVAX }" class="cursor-pointer hover:opacity-80">
+            <p @click="toggleCurrency('AVAX')" :class="{ 'font-bold': isAVAX }" class="cursor-pointer hover:opacity-80 text-xs md:text-base">
                 AVAX
             </p>
         </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="md:px-8 py-10 text-sm md:text-base">
+    <div class="md:px-8 mt-6 text-sm md:text-base">
         <h1 class="bg-tertiary md:text-xl font-semibold rounded px-5 py-3 mb-3">Reward Description</h1>
 
         <ul class="p-5 list-decimal mb-3">

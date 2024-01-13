@@ -1,5 +1,5 @@
 <template>
-    <div class="md:px-8 py-10">
+    <div class="md:px-8 mt-6">
         <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-4 mb-3">Who We Are?</h1>
 
         <div class="p-5 mb-4">

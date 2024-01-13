@@ -1,6 +1,6 @@
 <template>
-    <div class="h-full py-2 text-sm md:text-base">
-        <section class="mt-8 mb-8">
+    <div class="h-full pb-2 text-sm md:text-base">
+        <section class="mt-6 md:mt-3 mb-8">
             <router-link :to="{ name: 'home' }">
                 <span class="text-gray">Home&nbsp;</span>
             </router-link>

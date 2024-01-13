@@ -1,6 +1,6 @@
 <template>
     <div class="md:px-20 pb-10">
-        <Card class="mt-8 bg-grey rounded-md text-sm md:text-base">
+        <Card class="mt-4 bg-grey rounded-md text-sm md:text-base">
             <template #subtitle>
                 <h1 class="text-white text-lg font-bold md:mx-12 pt-3">Overall</h1>
             </template>

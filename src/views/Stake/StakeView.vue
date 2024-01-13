@@ -1,5 +1,5 @@
 <template>
-    <div class="px-5 md:px-10 lg:px-20 mt-10">
+    <div class="px-5 md:px-10 lg:px-20 mt-5 md:mt-10">
         <h1 class="font-semibold mb-3">All Pools</h1>
         <div class="card md:flex items-center gap-10 mb-14">
             <img class="w-[240px] mb-7" src="/image-1.png" alt="Ethereum Eth">
