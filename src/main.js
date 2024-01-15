@@ -8,6 +8,7 @@ import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import App from '@/App.vue'
 import router from '@/router'
+import ToastService from 'primevue/toastservice'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -15,6 +16,8 @@ const app = createApp(App)
 app.use(router)
 
 app.use(PrimeVue)
+
+app.use(ToastService)
 
 app.use(pinia)
 
