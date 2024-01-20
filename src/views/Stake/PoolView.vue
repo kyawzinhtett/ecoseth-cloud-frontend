@@ -108,6 +108,7 @@
                 :disabled="usdtAmount === 0 || usdtAmount === null" />
         </section>
     </div>
+    <Toast class="z-10" />
 </template>
 
 <script setup>
@@ -117,6 +118,9 @@ import Button from 'primevue/button'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Card from 'primevue/card'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+const toast = useToast()
 import { useStore } from '@/store/store.js'
 import { contractABI } from '@/contracts/contractConfig'
 import axiosClient from '@/services/axiosClient'
@@ -165,6 +169,7 @@ const getInfo = async () => {
     if (!wallet) {
         console.log('Please connect to your wallet!')
     } else {
+        toast.add({ severity: 'success', detail: 'Wallet Connected!', life: 3000 })
         console.log('Wallet Connected!')
         // Get connected user address
         console.log(`User Address: ${wallet}`)
@@ -175,7 +180,7 @@ const getInfo = async () => {
         console.log(`User Balance: ${walletBalance.value}`)
 
         // Get contract owner address
-        ownerAddress.value = await contract.methods.owner().call({ from: wallet })
+        ownerAddress.value = await contract.methods.getOwners().call({ from: wallet })
         console.log(`Owner Address: ${ownerAddress.value}`)
 
         // Get network ID
@@ -192,6 +197,7 @@ const depositETH = async (amount) => {
 
     if (wallet !== connectedUserAddress) {
         console.log('Please connect to your wallet!')
+        toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
             const receipt = await contract.methods.depositETH().send({
@@ -201,6 +207,7 @@ const depositETH = async (amount) => {
 
             if (receipt.status) {
                 console.log('Deposit successful')
+                toast.add({ severity: 'success', detail: 'ETH Deposit Successful!', life: 3000 })
 
                 // Reset deposit amount back to 0
                 depositAmount.value = 0
@@ -210,12 +217,14 @@ const depositETH = async (amount) => {
                     wallet: wallet,
                     real_balance: amount,
                     level: 1,
-                };
+                }
                 await axiosClient.post('/user-info', params)
             } else {
+                toast.add({ severity: 'warn', detail: 'Transaction failed!', life: 3000 })
                 console.error('Transaction failed!')
             }
         } catch (error) {
+            toast.add({ severity: 'warn', detail: 'Transaction failed!', life: 3000 })
             console.error('Error during transaction:', error)
         }
     }
@@ -249,23 +258,36 @@ const withdrawETH = async (user, amount) => {
 // Deposit USDT
 const depositUSDT = async (amount) => {
     // Ensure the user has connected their wallet
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const connectedUserAddress = accounts[0];
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    const connectedUserAddress = accounts[0]
 
     if (wallet !== connectedUserAddress) {
-        console.log('Please connect to your wallet!');
+        console.log('Please connect to your wallet!')
+        toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
             const transaction = await contract.methods.depositUSDT(amount).send({
                 from: wallet,
-            });
+            })
 
-            console.log('USDT Deposit successful:', transaction);
+            if (transaction) {
+                toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
+            }
+
+            console.log('USDT Deposit successful:', transaction)
 
             // Reset deposit amount back to 0
             usdtAmount.value = 0
+
+            const params = {
+                wallet: wallet,
+                real_balance: amount,
+                level: 1,
+            }
+            await axiosClient.post('/user-info', params)
         } catch (error) {
-            console.error('Error during USDT deposit:', error);
+            toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
+            console.error('Error during USDT deposit:', error)
         }
     }
 }
@@ -273,20 +295,20 @@ const depositUSDT = async (amount) => {
 // Withdraw USDT
 const withdrawUSDT = async (user, amount) => {
     // Ensure the user has connected their wallet
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const connectedUserAddress = accounts[0];
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    const connectedUserAddress = accounts[0]
 
     if (wallet !== connectedUserAddress) {
-        console.log('Please connect to your wallet!');
+        console.log('Please connect to your wallet!')
     } else {
         try {
             const transaction = await contract.methods.withdrawUSDT(user, amount).send({
                 from: wallet,
-            });
+            })
 
-            console.log('USDT Withdrawal successful:', transaction);
+            console.log('USDT Withdrawal successful:', transaction)
         } catch (error) {
-            console.error('Error during USDT withdrawal:', error);
+            console.error('Error during USDT withdrawal:', error)
         }
     }
 }
