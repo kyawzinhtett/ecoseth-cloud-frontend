@@ -114,6 +114,12 @@ const connectWallet = async () => {
     }
 }
 
+const disconnectWallet = () => {
+    store.setWalletAddress(null)
+
+    router.push({ name: 'home' })
+}
+
 const connectBscWallet = async () => {
     try {
         if (window.BinanceChain !== 'undefined' && window.BinanceChain.isTrustWallet && !window.BinanceChain.isMetaMask) {
