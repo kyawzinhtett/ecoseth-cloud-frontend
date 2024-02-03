@@ -189,17 +189,17 @@ const getInfo = async () => {
 // Deposit Eth
 const depositETH = async (amount) => {
     // Ensure the user has connected their wallet
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    const connectedUserAddress = accounts[0]
-
-    if (wallet !== connectedUserAddress) {
+    if (!wallet) {
         console.log('Please connect to your wallet!')
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
+            // Convert amount to Wei
+            const amountInEth = web3.utils.toWei(amount.toString(), 'ether')
+
             const receipt = await contract.methods.depositETH().send({
                 from: wallet,
-                value: amount,
+                value: amountInEth,
             })
 
             if (receipt.status) {
@@ -238,10 +238,10 @@ const withdrawETH = async (user, amount) => {
     } else {
         try {
             // Convert amount to Wei
-            // const amountInWei = web3.utils.toWei(amount.toString(), 'ether')
+            const amountInEth = web3.utils.toWei(amount.toString(), 'ether')
 
             // Call the withdraw method on the contract
-            const transaction = await contract.methods.withdrawETH(user, amount).send({
+            const transaction = await contract.methods.withdrawETH(user, amountInEth).send({
                 from: wallet,
             })
 
@@ -254,11 +254,7 @@ const withdrawETH = async (user, amount) => {
 
 // Deposit USDT
 const depositUSDT = async (amount) => {
-    // Ensure the user has connected their wallet
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    const connectedUserAddress = accounts[0]
-
-    if (wallet !== connectedUserAddress) {
+    if (!wallet) {
         console.log('Please connect to your wallet!')
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
