@@ -24,7 +24,8 @@
         </router-link>
         <section class="flex justify-between items-center mb-5">
             <h1 class="text-lg md:text-xl font-semibold mb-3">Pool</h1>
-            <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..." class="md:px-3 bg-[#141414]" />
+            <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..."
+                class="md:px-3 bg-[#141414]" />
         </section>
         <section class="mb-5">
             <div class="bg-primary rounded-3xl flex justify-evenly py-3">
@@ -53,15 +54,11 @@
             </div>
             <div v-if="isEther" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="depositAmount" type="number" min="0"
-                    class="bg-secondary border border-gray-700 w-full md:w-1/2 lg:w-1/3 p-3 mb-3"
-                    placeholder="Enter unit in Wei" />
-                <Button label="Max" class="btn-outline py-2" />
+                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter unit in Wei" />
             </div>
             <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="usdtAmount" type="number" min="0"
-                    class="bg-secondary border border-gray-700 w-full md:w-1/2 lg:w-1/3 p-3 mb-3"
-                    placeholder="Enter USDT" />
-                <Button label="Max" class="btn-outline py-2" />
+                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter USDT" />
             </div>
             <p v-if="walletAddress" class="text-xs">
                 <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
