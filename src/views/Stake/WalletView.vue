@@ -89,11 +89,14 @@ import { useRouter } from 'vue-router'
 import { useStore } from '@/store/store.js'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { Web3 } from 'web3'
+
 const toast = useToast()
+const web3 = new Web3(window.ethereum)
+const store = new useStore()
+const router = new useRouter()
 
 const walletAddress = ref('')
-const router = new useRouter()
-const store = new useStore()
 
 const connectWallet = async () => {
     try {
@@ -102,8 +105,10 @@ const connectWallet = async () => {
                 method: 'eth_requestAccounts'
             })
             walletAddress.value = accounts[0]
+            const balance = await web3.eth.getBalance(walletAddress.value)
 
             store.setWalletAddress(walletAddress.value)
+            store.setWalletBalance(balance)
 
             router.push({ name: 'pool' })
         } else {

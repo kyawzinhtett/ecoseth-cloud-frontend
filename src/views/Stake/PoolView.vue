@@ -153,6 +153,7 @@ const toggleCurrency = (currency) => {
 }
 
 const wallet = store.getWalletAddress
+const balance = store.getWalletBalance
 
 // Slice wallet address
 walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
@@ -170,11 +171,15 @@ const getInfo = async () => {
         store.setWalletConnectedToastShown()
 
         console.log('Wallet Connected!')
+
+        // Get connected user balances
+        walletBalance.value = web3.utils.fromWei(balance, 'ether')
+        console.log(`User Balance: ${walletBalance.value}`)
+    } else {
         // Get connected user address
         console.log(`User Address: ${wallet}`)
 
         // Get connected user balances
-        const balance = await web3.eth.getBalance(wallet)
         walletBalance.value = web3.utils.fromWei(balance, 'ether')
         console.log(`User Balance: ${walletBalance.value}`)
 
