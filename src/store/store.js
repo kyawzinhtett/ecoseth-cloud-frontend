@@ -4,7 +4,8 @@ export const useStore = defineStore({
     id: 'useWalletStore',
     state: () => ({
         walletAddress: null,
-        walletBalance: null
+        walletBalance: null,
+        walletConnectedToastShown: false
     }),
 
     getters: {
@@ -20,6 +21,11 @@ export const useStore = defineStore({
     actions: {
         setWalletAddress(walletAddress) {
             this.walletAddress = walletAddress
+            this.walletConnectedToastShown = false
+        },
+
+        setWalletConnectedToastShown() {
+            this.walletConnectedToastShown = true
         },
 
         setWalletBalance(walletBalance) {

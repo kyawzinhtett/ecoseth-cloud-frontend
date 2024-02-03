@@ -165,8 +165,10 @@ onMounted(() => {
 const getInfo = async () => {
     if (!wallet) {
         console.log('Please connect to your wallet!')
-    } else {
+    } else if (!store.walletConnectedToastShown) {
         toast.add({ severity: 'success', detail: 'Wallet Connected!', life: 3000 })
+        store.setWalletConnectedToastShown()
+
         console.log('Wallet Connected!')
         // Get connected user address
         console.log(`User Address: ${wallet}`)
