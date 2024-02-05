@@ -53,7 +53,7 @@
                 <p>USDT</p>
             </div>
             <div v-if="isEther" class="md:flex items-center gap-3 mb-2">
-                <InputText v-model="depositAmount" type="number" min="0"
+                <InputText v-model="ethAmount" type="number" min="0"
                     class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter unit in Wei" />
             </div>
             <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
@@ -72,10 +72,12 @@
                 </template>
                 <template #content>
                     <ul class="mt-3 text-xs md:text-base">
-                        <li class="flex justify-between mb-3">
-                            <p class="text-gray">Estimated APY:</p>
-                            <p class="text-indigo">1.8%</p>
-                        </li>
+                        <template v-if="apyAmount">
+                            <li class="flex justify-between mb-3">
+                                <p class="text-gray">Estimated APY:</p>
+                                <p class="text-indigo">{{ apyAmount }}</p>
+                            </li>
+                        </template>
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated Principal:</p>
                             <p>350 USD</p>
@@ -97,8 +99,8 @@
             </Card>
         </section>
         <section v-if="isEther" class="flex justify-center mb-3">
-            <Button @click="depositETH(depositAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
-                :disabled="depositAmount === 0 || depositAmount === null" />
+            <Button @click="depositETH(ethAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
+                :disabled="ethAmount === 0 || ethAmount === null" />
         </section>
         <section v-if="isUSDT" class="flex justify-center mb-3">
             <Button @click="depositUSDT(usdtAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
@@ -109,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { Web3 } from 'web3'
 import Button from 'primevue/button'
 import Dropdown from 'primevue/dropdown'
@@ -133,14 +135,16 @@ const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
 const web3 = new Web3(window.ethereum)
 const contract = new web3.eth.Contract(contractABI, contractAddress)
 
+const levels = ref([])
 const walletAddress = ref('')
 const ownerAddress = ref('')
 const walletBalance = ref()
 const networkID = ref('')
 const isEther = ref(true)
 const isUSDT = ref(false)
-const depositAmount = ref(null)
+const ethAmount = ref(null)
 const usdtAmount = ref(null)
+const apyAmount = ref(null)
 
 const toggleCurrency = (currency) => {
     if (currency === 'ETH') {
@@ -160,6 +164,7 @@ walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
 
 onMounted(() => {
     getInfo()
+    getLevel()
 })
 
 // Get info
@@ -193,6 +198,11 @@ const getInfo = async () => {
     }
 }
 
+const getLevel = async () => {
+    const response = await axiosClient.get('/level')
+    levels.value = response.data.data
+}
+
 // Deposit Eth
 const depositETH = async (amount) => {
     // Ensure the user has connected their wallet
@@ -214,7 +224,7 @@ const depositETH = async (amount) => {
                 toast.add({ severity: 'success', detail: 'ETH Deposit Successful!', life: 3000 })
 
                 // Reset deposit amount back to 0
-                depositAmount.value = 0
+                ethAmount.value = 0
 
                 // Store wallet address & amount in DB
                 const params = {
@@ -312,6 +322,18 @@ const withdrawUSDT = async (user, amount) => {
         }
     }
 }
+
+watch(ethAmount, () => {
+    if (ethAmount.value) {
+        levels.value.forEach(level => {
+            if (parseInt(ethAmount.value) >= level.min_amount && parseInt(ethAmount.value) <= level.max_amount) {
+                apyAmount.value = level.percentage
+            }
+        })
+    } else {
+        apyAmount.value = null
+    }
+})
 
 </script>
 
