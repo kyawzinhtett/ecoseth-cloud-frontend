@@ -108,6 +108,7 @@ const connectWallet = async () => {
             const balance = await web3.eth.getBalance(walletAddress.value)
 
             localStorage.setItem('walletAddress', walletAddress.value)
+            localStorage.setItem('walletBalance', balance)
 
             store.setWalletAddress(walletAddress.value)
             store.setWalletBalance(balance)

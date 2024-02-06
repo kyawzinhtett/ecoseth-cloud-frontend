@@ -164,9 +164,8 @@ const toggleCurrency = (currency) => {
     }
 }
 
-// const wallet = store.getWalletAddress
-const balance = store.getWalletBalance
 const wallet = localStorage.getItem('walletAddress')
+const balance = localStorage.getItem('walletBalance')
 
 // Slice wallet address
 walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
