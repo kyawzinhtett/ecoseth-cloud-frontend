@@ -107,6 +107,8 @@ const connectWallet = async () => {
             walletAddress.value = accounts[0]
             const balance = await web3.eth.getBalance(walletAddress.value)
 
+            localStorage.setItem('walletAddress', walletAddress.value)
+
             store.setWalletAddress(walletAddress.value)
             store.setWalletBalance(balance)
 
@@ -117,12 +119,6 @@ const connectWallet = async () => {
     } catch (error) {
         toast.add({ severity: 'warn', detail: 'Please install Metamask.', life: 3000 })
     }
-}
-
-const disconnectWallet = () => {
-    store.setWalletAddress(null)
-
-    router.push({ name: 'home' })
 }
 
 const connectBscWallet = async () => {

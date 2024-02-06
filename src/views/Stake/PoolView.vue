@@ -1,27 +1,35 @@
 <template>
     <div class="mt-4 text-sm md:text-base">
-        <router-link v-if="walletAddress" :to="{ name: 'asset' }">
+        <template v-if="walletAddress">
             <section class="flex justify-end items-center gap-2 mb-6">
-                <Button class="btn-primary px-2 py-2 text-white">
-                    <div class="flex gap-3">
-                        <span class="text-xs">{{ walletAddress }}</span>
-                        <i class="pi pi-wallet"></i>
-                    </div>
-                </Button>
-            </section>
-        </router-link>
+                <router-link v-if="walletAddress" :to="{ name: 'asset' }">
+                    <Button class="btn-primary px-2 py-2 text-white">
+                        <div class="flex gap-3">
+                            <span class="text-xs">{{ walletAddress }}</span>
+                            <i class="pi pi-wallet"></i>
+                        </div>
+                    </Button>
+                </router-link>
 
-        <router-link v-if="!walletAddress" :to="{ name: 'wallet' }">
-            <section class="flex justify-end items-center gap-2 mb-6">
-                <p>Wallet</p>
-                <Button class="btn-primary px-2 py-2 text-white">
-                    <div class="flex gap-3">
-                        <span class="text-xs">{{ walletAddress }}</span>
-                        <i class="pi pi-wallet"></i>
-                    </div>
+                <Button class="btn-primary px-2 py-2 text-white" @click="disconnectWallet">
+                    <span class="text-xs">Disconnect</span>
                 </Button>
             </section>
-        </router-link>
+        </template>
+
+        <template v-else-if="!walletAddress">
+            <section class="flex justify-end items-center gap-2 mb-6">
+                <router-link :to="{ name: 'wallet' }">
+                    <Button class="btn-primary px-2 py-2 text-white">
+                        <div class="flex justify-center gap-3">
+                            <span class="text-xs">Wallet</span>
+                            <i class="pi pi-wallet"></i>
+                        </div>
+                    </Button>
+                </router-link>
+            </section>
+        </template>
+
         <section class="flex justify-between items-center mb-5">
             <h1 class="text-lg md:text-xl font-semibold mb-3">Pool</h1>
             <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..."
@@ -156,8 +164,9 @@ const toggleCurrency = (currency) => {
     }
 }
 
-const wallet = store.getWalletAddress
+// const wallet = store.getWalletAddress
 const balance = store.getWalletBalance
+const wallet = localStorage.getItem('walletAddress')
 
 // Slice wallet address
 walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
@@ -334,6 +343,16 @@ watch(ethAmount, () => {
         apyAmount.value = null
     }
 })
+
+const disconnectWallet = () => {
+    localStorage.removeItem('walletAddress')
+
+    store.setWalletAddress(null)
+
+    toast.add({ severity: 'success', detail: 'Wallet Disconnected!', life: 3000 })
+
+    location.reload()
+}
 
 </script>
 
