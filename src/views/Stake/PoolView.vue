@@ -332,9 +332,9 @@ const withdrawUSDT = async (user, amount) => {
 }
 
 watch(ethAmount, () => {
-    if (ethAmount.value) {
+    if (ethAmount.value && parseFloat(ethAmount.value) >= (levels.value)[0].min_amount ) {
         levels.value.forEach(level => {
-            if (parseInt(ethAmount.value) >= level.min_amount && parseInt(ethAmount.value) <= level.max_amount) {
+            if (parseFloat(ethAmount.value) >= level.min_amount && parseFloat(ethAmount.value) <= level.max_amount) {
                 apyAmount.value = level.percentage
             }
         })
