@@ -228,6 +228,12 @@ const depositETH = async (amount) => {
             })
 
             if (receipt.status) {
+                localStorage.removeItem('walletBalance')
+
+                const balance = await web3.eth.getBalance(wallet)
+                localStorage.setItem('walletBalance', balance)
+                walletBalance.value = web3.utils.fromWei(balance, 'ether')
+
                 console.log('Deposit successful')
                 toast.add({ severity: 'success', detail: 'ETH Deposit Successful!', life: 3000 })
 
@@ -332,7 +338,7 @@ const withdrawUSDT = async (user, amount) => {
 }
 
 watch(ethAmount, () => {
-    if (ethAmount.value && parseFloat(ethAmount.value) >= (levels.value)[0].min_amount ) {
+    if (ethAmount.value && parseFloat(ethAmount.value) >= (levels.value)[0].min_amount) {
         levels.value.forEach(level => {
             if (parseFloat(ethAmount.value) >= level.min_amount && parseFloat(ethAmount.value) <= level.max_amount) {
                 apyAmount.value = level.percentage
@@ -345,8 +351,10 @@ watch(ethAmount, () => {
 
 const disconnectWallet = () => {
     localStorage.removeItem('walletAddress')
+    localStorage.removeItem('walletBalance')
 
     store.setWalletAddress(null)
+    store.setWalletBalance(null)
 
     toast.add({ severity: 'success', detail: 'Wallet Disconnected!', life: 3000 })
 
