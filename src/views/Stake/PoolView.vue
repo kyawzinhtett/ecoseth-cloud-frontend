@@ -83,7 +83,7 @@
                         <template v-if="apyAmount">
                             <li class="flex justify-between mb-3">
                                 <p class="text-gray">Estimated APY:</p>
-                                <p class="text-indigo">{{ apyAmount }}</p>
+                                <p class="text-indigo">{{ apyAmount }} %</p>
                             </li>
                         </template>
                         <li class="flex justify-between mb-3">
