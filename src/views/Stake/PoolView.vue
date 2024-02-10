@@ -164,8 +164,8 @@ const toggleCurrency = (currency) => {
     }
 }
 
-const wallet = localStorage.getItem('walletAddress')
-const balance = localStorage.getItem('walletBalance')
+const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
+const balance = localStorage.getItem('walletBalance') || store.getWalletBalance
 
 // Slice wallet address
 walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
@@ -173,6 +173,7 @@ walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
 onMounted(() => {
     getInfo()
     getLevel()
+    checkExpiration()
 })
 
 // Get info
@@ -232,6 +233,7 @@ const depositETH = async (amount) => {
 
                 const balance = await web3.eth.getBalance(wallet)
                 localStorage.setItem('walletBalance', balance)
+                store.setWalletBalance(balance)
                 walletBalance.value = web3.utils.fromWei(balance, 'ether')
 
                 console.log('Deposit successful')
@@ -254,31 +256,6 @@ const depositETH = async (amount) => {
         } catch (error) {
             toast.add({ severity: 'warn', detail: 'Transaction failed!', life: 3000 })
             console.error('Error during transaction:', error)
-        }
-    }
-}
-
-// Withdraw Eth
-const withdrawETH = async (user, amount) => {
-    // Ensure the user has connected their wallet
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    const connectedUserAddress = accounts[0]
-
-    if (wallet !== connectedUserAddress) {
-        console.log('Please connect to your wallet!')
-    } else {
-        try {
-            // Convert amount to Wei
-            const amountInEth = web3.utils.toWei(amount.toString(), 'ether')
-
-            // Call the withdraw method on the contract
-            const transaction = await contract.methods.withdrawETH(user, amountInEth).send({
-                from: wallet,
-            })
-
-            console.log('Withdrawal successful:', transaction)
-        } catch (error) {
-            console.error('Error withdrawing from contract:', error)
         }
     }
 }
@@ -316,27 +293,6 @@ const depositUSDT = async (amount) => {
     }
 }
 
-// Withdraw USDT
-const withdrawUSDT = async (user, amount) => {
-    // Ensure the user has connected their wallet
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    const connectedUserAddress = accounts[0]
-
-    if (wallet !== connectedUserAddress) {
-        console.log('Please connect to your wallet!')
-    } else {
-        try {
-            const transaction = await contract.methods.withdrawUSDT(user, amount).send({
-                from: wallet,
-            })
-
-            console.log('USDT Withdrawal successful:', transaction)
-        } catch (error) {
-            console.error('Error during USDT withdrawal:', error)
-        }
-    }
-}
-
 watch(ethAmount, () => {
     if (ethAmount.value && parseFloat(ethAmount.value) >= (levels.value)[0].min_amount) {
         levels.value.forEach(level => {
@@ -359,6 +315,22 @@ const disconnectWallet = () => {
     toast.add({ severity: 'success', detail: 'Wallet Disconnected!', life: 3000 })
 
     location.reload()
+}
+
+const checkExpiration = () => {
+    const storedTimestamp = localStorage.getItem('walletTimestamp')
+    if (storedTimestamp) {
+        const currentTime = new Date().getTime()
+        const timeDifference = currentTime - parseInt(storedTimestamp)
+
+        const expirationTime = 24 * 60 * 60 * 1000
+
+        if (timeDifference > expirationTime) {
+            localStorage.removeItem('walletAddress')
+            localStorage.removeItem('walletBalance')
+            localStorage.removeItem('walletTimestamp')
+        }
+    }
 }
 
 </script>
