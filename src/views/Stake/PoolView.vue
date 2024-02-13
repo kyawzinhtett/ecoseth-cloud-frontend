@@ -108,11 +108,11 @@
         </section>
         <section v-if="isEther" class="flex justify-center mb-3">
             <Button @click="depositETH(ethAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
-                :disabled="ethAmount === 0 || ethAmount === null" />
+                :disabled="ethAmount === 0 || ethAmount === null || isClicked" />
         </section>
         <section v-if="isUSDT" class="flex justify-center mb-3">
             <Button @click="depositUSDT(usdtAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
-                :disabled="usdtAmount === 0 || usdtAmount === null" />
+                :disabled="usdtAmount === 0 || usdtAmount === null || isClicked" />
         </section>
     </div>
     <Toast class="z-10" />
@@ -153,6 +153,7 @@ const isUSDT = ref(false)
 const ethAmount = ref(null)
 const usdtAmount = ref(null)
 const apyAmount = ref(null)
+const isClicked = ref(false)
 
 const toggleCurrency = (currency) => {
     if (currency === 'ETH') {
@@ -220,6 +221,7 @@ const depositETH = async (amount) => {
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
+            isClicked.value = true
             // Convert amount to Wei
             const amountInEth = web3.utils.toWei(amount.toString(), 'ether')
 
@@ -249,6 +251,7 @@ const depositETH = async (amount) => {
                     level: 1,
                 }
                 await axiosClient.post('/user-info', params)
+                isClicked.value = false
             } else {
                 toast.add({ severity: 'warn', detail: 'Transaction failed!', life: 3000 })
                 console.error('Transaction failed!')
@@ -267,6 +270,8 @@ const depositUSDT = async (amount) => {
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
+            isClicked.value = true
+
             const transaction = await contract.methods.depositUSDT(amount).send({
                 from: wallet,
             })
@@ -286,6 +291,7 @@ const depositUSDT = async (amount) => {
                 level: 1,
             }
             await axiosClient.post('/user-info', params)
+            isClicked.value = false
         } catch (error) {
             toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
             console.error('Error during USDT deposit:', error)
