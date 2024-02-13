@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="hover:cursor-pointer w-full mb-3">
-                <div @click="connectMetamaskWallet"
+                <div @click="connectCoinbaseWallet"
                     class="bg-tertiary rounded-md flex justify-between items-center px-6 py-4 md:px-10 md:py-5">
                     <span class="text-xl md:text-2xl">Coinbase</span>
                     <img src="/coinbase.svg" alt="Coinbase" class="w-[40px] h-[40px]">
@@ -173,6 +173,32 @@ const connectOkxWallet = async () => {
         }
     } catch (error) {
         toast.add({ severity: 'warn', detail: 'Please install OKX Wallet.', life: 3000 })
+    }
+}
+
+const connectCoinbaseWallet = async () => {
+    try {
+        if (window.coinbaseWalletExtension !== 'undefined' && window.coinbaseWalletExtension.isCoinbaseWallet) {
+            const accounts = await window.coinbaseWalletExtension.request({ method: 'eth_requestAccounts' })
+
+            walletAddress.value = accounts[0]
+            const balance = await web3.eth.getBalance(walletAddress.value)
+
+            const currentTime = new Date().getTime()
+
+            localStorage.setItem('walletAddress', walletAddress.value)
+            localStorage.setItem('walletBalance', balance)
+            localStorage.setItem('walletTimestamp', currentTime)
+
+            store.setWalletAddress(walletAddress.value)
+            store.setWalletBalance(balance)
+
+            router.push({ name: 'pool' })
+        } else {
+            toast.add({ severity: 'warn', detail: 'Please install Coinbase Wallet.', life: 3000 })
+        }
+    } catch (error) {
+        toast.add({ severity: 'warn', detail: 'Please install Coinbase Wallet.', life: 3000 })
     }
 }
 
