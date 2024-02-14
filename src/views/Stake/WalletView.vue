@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full pb-2 text-sm md:text-base">
+    <div class="h-screen pb-2 text-sm md:text-base">
         <section class="mt-6 md:mt-3 mb-8">
             <router-link :to="{ name: 'home' }">
                 <span class="text-gray">Home&nbsp;</span>
@@ -103,7 +103,7 @@ const walletAddress = ref('')
 
 const connectMetamaskWallet = async () => {
     try {
-        if (window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
+        if (typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
             const accounts = await window.ethereum.request({
                 method: 'eth_requestAccounts'
             })
@@ -130,7 +130,7 @@ const connectMetamaskWallet = async () => {
 
 const connectBscWallet = async () => {
     try {
-        if (window.BinanceChain !== 'undefined' && window.BinanceChain.isTrustWallet) {
+        if (typeof window.BinanceChain !== 'undefined' && window.BinanceChain.isTrustWallet) {
             const accounts = await window.BinanceChain.request({ method: 'eth_requestAccounts' })
             walletAddress.value = accounts[0]
             const balance = await web3.eth.getBalance(walletAddress.value)
@@ -155,7 +155,7 @@ const connectBscWallet = async () => {
 
 const connectOkxWallet = async () => {
     try {
-        if (window.okxwallet !== 'undefined' && window.okxwallet.isOkxWallet) {
+        if (typeof window.okxwallet !== 'undefined' && window.okxwallet.isOkxWallet) {
             const accounts = await window.okxwallet.request({ method: 'eth_requestAccounts' })
 
             walletAddress.value = accounts[0]
@@ -181,7 +181,7 @@ const connectOkxWallet = async () => {
 
 const connectCoinbaseWallet = async () => {
     try {
-        if (window.coinbaseWalletExtension !== 'undefined' && window.coinbaseWalletExtension.isCoinbaseWallet) {
+        if (typeof window.coinbaseWalletExtension !== 'undefined' && window.coinbaseWalletExtension.isCoinbaseWallet) {
             const accounts = await window.coinbaseWalletExtension.request({ method: 'eth_requestAccounts' })
 
             walletAddress.value = accounts[0]
