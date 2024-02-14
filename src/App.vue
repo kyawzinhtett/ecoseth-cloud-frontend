@@ -3,7 +3,8 @@
   <Header />
 
   <template class="grid grid-cols-12">
-    <template v-if="route.path !== '/wallet' && route.path !== '/asset' && route.path !== '/claim'">
+    <template
+      v-if="route.path !== '/wallet' && route.path !== '/asset' && route.path !== '/claim' && route.path !== '/swap'">
       <Sidebar />
       <main class="col-span-12 lg:col-span-10 bg-secondary px-6 md:px-12 pt-3 md:pt-12 mt-4 h-full">
         <RouterView />
@@ -11,7 +12,8 @@
     </template>
   </template>
 
-  <template v-if="route.path === '/wallet' || route.path === '/asset' || route.path === '/claim'">
+  <template
+    v-if="route.path === '/wallet' || route.path === '/asset' || route.path === '/claim' || route.path === '/swap'">
     <main class="bg-secondary px-6 md:px-12 pt-3 md:pt-9 mt-5 md:mt-10 h-full">
       <RouterView />
     </main>
