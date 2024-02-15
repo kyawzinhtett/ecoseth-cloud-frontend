@@ -254,10 +254,14 @@ const depositETH = async (amount) => {
                 await axiosClient.post('/user-info', params)
                 isClicked.value = false
             } else {
+                isClicked.value = false
+
                 toast.add({ severity: 'warn', detail: 'Transaction failed!', life: 3000 })
                 console.error('Transaction failed!')
             }
         } catch (error) {
+            isClicked.value = false
+
             toast.add({ severity: 'warn', detail: 'Transaction failed!', life: 3000 })
             console.error('Error during transaction:', error)
         }
@@ -295,6 +299,8 @@ const depositUSDT = async (amount) => {
             await axiosClient.post('/user-info', params)
             isClicked.value = false
         } catch (error) {
+            isClicked.value = false
+
             toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
             console.error('Error during USDT deposit:', error)
         }
