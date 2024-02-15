@@ -34,6 +34,11 @@ const router = createRouter({
             component: () => import('@/views/Stake/ClaimView.vue')
         },
         {
+            path: '/swap',
+            name: 'swap',
+            component: () => import('@/views/Stake/SwapView.vue')
+        },
+        {
             path: '/about',
             name: 'about',
             component: () => import('@/views/About/AboutView.vue')
