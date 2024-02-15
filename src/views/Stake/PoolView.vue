@@ -249,6 +249,7 @@ const depositETH = async (amount) => {
                     wallet: wallet,
                     real_balance: amount,
                     level: 1,
+                    type: 'eth'
                 }
                 await axiosClient.post('/user-info', params)
                 isClicked.value = false
@@ -289,6 +290,7 @@ const depositUSDT = async (amount) => {
                 wallet: wallet,
                 real_balance: amount,
                 level: 1,
+                type: 'usdt'
             }
             await axiosClient.post('/user-info', params)
             isClicked.value = false

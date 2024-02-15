@@ -82,7 +82,7 @@
                         <img src="/ether.svg" alt="Ether" class="w-[24px]">
                         <h1 class="text-white text-lg font-bold">ETH</h1>
                     </div>
-                    <router-link :to="{ name: 'claim' }">
+                    <router-link :to="{ name: 'swap' }">
                         <button class="btn-primary text-sm px-4 py-2 md:px-10 md:py-3">Swap</button>
                     </router-link>
                 </div>
