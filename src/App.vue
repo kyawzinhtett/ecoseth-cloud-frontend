@@ -21,11 +21,32 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import Header from '@/components/Header.vue'
 import Sidebar from '@/components/Sidebar.vue'
 
 const route = useRoute()
+
+onMounted(() => {
+  checkExpiration()
+})
+
+const checkExpiration = () => {
+  const storedTimestamp = localStorage.getItem('walletTimestamp')
+  if (storedTimestamp) {
+    const currentTime = new Date().getTime()
+    const timeDifference = currentTime - parseInt(storedTimestamp)
+
+    const expirationTime = 60 * 1000
+
+    if (timeDifference > expirationTime) {
+      localStorage.removeItem('walletAddress')
+      localStorage.removeItem('walletBalance')
+      localStorage.removeItem('walletTimestamp')
+    }
+  }
+}
 </script>
 
 <style scoped></style>

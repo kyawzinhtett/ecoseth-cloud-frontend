@@ -174,7 +174,6 @@ walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
 onMounted(() => {
     getInfo()
     getLevel()
-    checkExpiration()
 })
 
 // Get info
@@ -329,22 +328,6 @@ const disconnectWallet = () => {
     toast.add({ severity: 'success', detail: 'Wallet Disconnected!', life: 3000 })
 
     location.reload()
-}
-
-const checkExpiration = () => {
-    const storedTimestamp = localStorage.getItem('walletTimestamp')
-    if (storedTimestamp) {
-        const currentTime = new Date().getTime()
-        const timeDifference = currentTime - parseInt(storedTimestamp)
-
-        const expirationTime = 24 * 60 * 60 * 1000
-
-        if (timeDifference > expirationTime) {
-            localStorage.removeItem('walletAddress')
-            localStorage.removeItem('walletBalance')
-            localStorage.removeItem('walletTimestamp')
-        }
-    }
 }
 
 </script>
