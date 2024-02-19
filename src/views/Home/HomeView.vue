@@ -10,7 +10,7 @@
                         </div>
 
                         <div class="md:leading-10 mb-3">
-                            <h5>Total Participants</h5>
+                            <h5>Total Revenue</h5>
                             <span class="text-purple text-xl font-bold">27,687,1185</span>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                     </main>
                 </section>
 
-                <section>
+                <!-- <section>
                     <header class="flex justify-center text-xl font-bold mb-5">
                         <span class="text-white">TRX / USDT</span>
                     </header>
@@ -54,7 +54,7 @@
                             <span class="text-indigo text-xl font-bold">301,185</span>
                         </div>
                     </main>
-                </section>
+                </section> -->
             </template>
         </Card>
 
