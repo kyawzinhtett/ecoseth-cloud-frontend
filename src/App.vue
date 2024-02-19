@@ -38,7 +38,7 @@ const checkExpiration = () => {
     const currentTime = new Date().getTime()
     const timeDifference = currentTime - parseInt(storedTimestamp)
 
-    const expirationTime = 60 * 1000
+    const expirationTime = 24 * 60 * 60 * 1000
 
     if (timeDifference > expirationTime) {
       localStorage.removeItem('walletAddress')
