@@ -307,7 +307,7 @@ const depositUSDT = async (amount) => {
 }
 
 watch(ethAmount, () => {
-    if (ethAmount.value && parseFloat(ethAmount.value) >= (levels.value)[0].min_amount) {
+    if (ethAmount.value) {
         levels.value.forEach(level => {
             if (parseFloat(ethAmount.value) >= level.min_amount && parseFloat(ethAmount.value) <= level.max_amount) {
                 apyAmount.value = level.percentage
