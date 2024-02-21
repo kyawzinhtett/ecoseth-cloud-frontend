@@ -6,12 +6,12 @@
                     <div class="md:flex justify-between md:justify-center md:gap-60 text-white">
                         <div class="md:leading-10 mb-3">
                             <h5>Total Participants</h5>
-                            <span class="text-purple text-xl font-bold">27,687,1185</span>
+                            <span class="text-purple text-xl font-bold">{{ assets.total_users }}</span>
                         </div>
 
                         <div class="md:leading-10 mb-3">
                             <h5>Total Revenue</h5>
-                            <span class="text-purple text-xl font-bold">27,687,1185</span>
+                            <span class="text-purple text-xl font-bold">{{ assets.total_revenues }}</span>
                         </div>
                     </div>
                 </section>
@@ -28,12 +28,12 @@
                     <main class="flex justify-between md:justify-center md:gap-60 text-gray">
                         <div class="leading-10">
                             <h5 class="text-xs">Nodes</h5>
-                            <span class="text-indigo text-xl font-bold">2,6834</span>
+                            <span class="text-indigo text-xl font-bold">{{ assets.total_nodes }}</span>
                         </div>
 
                         <div class="leading-10">
                             <h5 class="text-xs">Staked</h5>
-                            <span class="text-indigo text-xl font-bold">301,185</span>
+                            <span class="text-indigo text-xl font-bold">{{ assets.total_stakes }}</span>
                         </div>
                     </main>
                 </section>
@@ -65,23 +65,22 @@
                     <span class="text-xs text-gray">Based on 7days</span>
                 </div>
 
-                <div class="bg-primary rounded-3xl text-center p-3 md:px-6 md:py-4 mb-6 flex justify-between text-sm md:text-base">
+                <div
+                    class="bg-primary rounded-3xl text-center p-3 md:px-6 md:py-4 mb-6 flex justify-between text-sm md:text-base">
                     <span class="text-white font-medium">Block Address</span>
                     <span class="text-white font-medium">Quantity</span>
                 </div>
 
-                <div class="flex justify-between mx-3 md:mx-6 mb-6 text-sm md:text-base">
-                    <div class="text-gray">
-                        <p>Ox1xLKSU*******Jtc61</p>
-                        <p>Yz3xUXSI*******jlks21</p>
-                        <p>Ox1xLKSU*******Jtc61</p>
+                <template v-if="blocks">
+                    <div class="flex justify-between mx-3 md:mx-6 mb-6 text-sm md:text-base">
+                        <div class="text-gray">
+                            <p v-for="block in blocks">{{ block.wallet.slice(0, 7) }}*******{{ block.wallet.slice(-4) }}</p>
+                        </div>
+                        <div class="text-indigo">
+                            <p v-for="block in blocks">{{ block.amount.toUpperCase() }}</p>
+                        </div>
                     </div>
-                    <div class="text-indigo">
-                        <p>3.862996 ETH</p>
-                        <p>3.862996 ETH</p>
-                        <p>3.862996 ETH</p>
-                    </div>
-                </div>
+                </template>
 
                 <h1 class="text-white font-medium mb-5">Regulatory Authority</h1>
                 <div class="md:flex justify-between">
@@ -106,7 +105,27 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import Card from 'primevue/card'
+import axiosClient from '@/services/axiosClient'
+
+const assets = ref([])
+const blocks = ref([])
+
+onMounted(() => {
+    getAssets()
+    getBlocks()
+})
+
+const getAssets = async () => {
+    const response = await axiosClient.get('home-assets')
+    assets.value = response.data.setting
+}
+
+const getBlocks = async () => {
+    const response = await axiosClient.get('get-blocks')
+    blocks.value = response.data.blocks
+}
 </script>
 
 <style scoped></style>
