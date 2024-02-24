@@ -19,9 +19,12 @@
                                 placeholder="Please enter amount" />
 
                             <section class="flex justify-between mb-5 text-sm md:text-base mt-3">
-                                <p class="text-xs">Available transfer: <span class="text-white font-bold">{{
-                                    parseFloat(walletBalance).toFixed(3) }} ETH</span></p>
-                                <p class="text-xs text-white">1ETH = {{ setting.usdt_exchange_rate }} USDT</p>
+                                <p v-if="walletBalance" class="text-xs">
+                                    Available transfer: <span class="text-white font-bold">{{ parseFloat(walletBalance).toFixed(3) }} ETH</span>
+                                </p>
+                                <p v-if="setting.usdt_exchange_rate" class="text-xs text-white">
+                                    1ETH = {{ setting.usdt_exchange_rate }} USDT
+                                </p>
                             </section>
                         </div>
 
@@ -83,19 +86,25 @@ const walletBalance = ref()
 const setting = ref([])
 const ethAmount = ref(null)
 const usdtAmount = ref(0)
+const userStats = ref([])
 const isClicked = ref(false)
 
 const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
-const balance = localStorage.getItem('walletBalance') || store.getWalletBalance
 
 onMounted(() => {
     getSetting()
+    getUserStats()
 })
 
 const getSetting = async () => {
     const response = await axiosClient.get('/home-assets')
     setting.value = response.data.setting
-    walletBalance.value = web3.utils.fromWei(balance, 'ether')
+}
+
+const getUserStats = async () => {
+    const response = await axiosClient.get(`/get-wallet-data/${wallet}`)
+    userStats.value = response.data.user_stats
+    walletBalance.value = userStats.value.profits.total_profit_eth
 }
 
 const fetchAll = () => {
@@ -114,6 +123,7 @@ const handleSwap = async () => {
     if (response && response.data) {
         ethAmount.value = null
         usdtAmount.value = 0
+        getUserStats()
 
         toast.add({ severity: 'success', detail: 'Swap Success!', life: 3000 })
     } else {
