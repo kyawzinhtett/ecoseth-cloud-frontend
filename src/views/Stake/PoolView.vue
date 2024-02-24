@@ -68,13 +68,13 @@
                 <InputText v-model="usdtAmount" type="number" min="0"
                     class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter USDT" />
             </div>
-            <p v-if="walletAddress" class="text-xs">
+            <p v-if="walletAddress && isEther" class="text-xs">
                 <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
             </p>
         </section>
 
         <section class="mb-6">
-            <Card class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
+            <Card v-if="isEther" class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
                 <template #title>
                     Details
                 </template>
@@ -88,7 +88,7 @@
 
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated Principal:</p>
-                            <p v-if="estimatedPrincipal">{{ parseFloat(estimatedPrincipal).toFixed(2) }} USDT</p>
+                            <p v-if="estimatedPrincipal">{{ parseFloat(estimatedPrincipal).toFixed(3) }} ETH</p>
                             <p v-else>---</p>
                         </li>
 
@@ -105,7 +105,7 @@
 
                         <li class="flex justify-between">
                             <p class="text-gray">Estimated Earn:</p>
-                            <p v-if="estimatedEarn">{{ parseFloat(estimatedEarn).toFixed(3) }} USDT per Month</p>
+                            <p v-if="estimatedEarn">{{ parseFloat(estimatedEarn).toFixed(3) }} ETH per Month</p>
                             <p v-else>---</p>
                         </li>
                     </ul>
@@ -128,7 +128,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { Web3 } from 'web3'
 import Button from 'primevue/button'
-import Dropdown from 'primevue/dropdown'
+// import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Card from 'primevue/card'
 import Toast from 'primevue/toast'
@@ -138,11 +138,11 @@ import { useStore } from '@/store/store.js'
 import { contractABI } from '@/contracts/contractConfig'
 import axiosClient from '@/services/axiosClient'
 
-const selectedOption = ref()
-const options = ref([
-    { name: 'ETH/USDT', code: 'ETH' },
-    { name: 'TRX/USDT', code: 'TRX' }
-])
+// const selectedOption = ref()
+// const options = ref([
+//     { name: 'ETH/USDT', code: 'ETH' },
+//     { name: 'TRX/USDT', code: 'TRX' }
+// ])
 
 const store = useStore()
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
@@ -326,7 +326,7 @@ watch(ethAmount, () => {
         levels.value.forEach(level => {
             if (parseFloat(ethAmount.value) >= level.min_amount && parseFloat(ethAmount.value) <= level.max_amount) {
                 apyAmount.value = level.percentage
-                estimatedPrincipal.value = (ethAmount.value * setting.value.usdt_exchange_rate) * (apyAmount.value / 100)
+                estimatedPrincipal.value = ethAmount.value * (apyAmount.value / 100)
                 estimatedEarn.value = estimatedPrincipal.value / 12
             }
         })

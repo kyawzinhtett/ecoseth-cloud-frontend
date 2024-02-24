@@ -60,15 +60,15 @@
                     <div class="md:flex justify-between items-center mb-6">
                         <div class="md:leading-8">
                             <span class="text-xs">Statistics</span>
-                            <p class="text-white">{{ usdtStats }} USD</p>
+                            <p class="text-white">{{ parseFloat(usdtStats).toFixed(3) }} USD</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Frozen</span>
-                            <p class="text-white">{{ frozenUsdt }} USD</p>
+                            <p class="text-white">{{ parseFloat(frozenUsdt).toFixed(3) }} USD</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Available</span>
-                            <p class="text-white">4,785.31 USD</p>
+                            <p class="text-white">{{ parseFloat(availableUsdt).toFixed(3) }} USD</p>
                         </div>
                     </div>
                 </section>
@@ -92,15 +92,15 @@
                     <div class="md:flex justify-between items-center mb-6">
                         <div class="md:leading-8">
                             <span class="text-xs">Statistics</span>
-                            <p class="text-white">{{ ethStats }} ETH</p>
+                            <p class="text-white">{{ parseFloat(ethStats).toFixed(3) }} ETH</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Frozen</span>
-                            <p class="text-white">{{ frozenEth }} ETH</p>
+                            <p class="text-white">{{ parseFloat(frozenEth).toFixed(3) }} ETH</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Available</span>
-                            <p class="text-white">4,785.31 USD</p>
+                            <p class="text-white">{{ parseFloat(availableEth).toFixed(3) }} ETH</p>
                         </div>
                     </div>
                 </section>
@@ -119,6 +119,8 @@ const ethStats = ref(null)
 const usdtStats = ref(null)
 const frozenEth = ref(null)
 const frozenUsdt = ref(null)
+const availableEth = ref(null)
+const availableUsdt = ref(null)
 
 const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
 
@@ -130,12 +132,13 @@ const getUserStats = async () => {
     const response = await axiosClient.get(`/get-wallet-data/${wallet}`)
     userStats.value = response.data.user_stats
 
-    userStats.value.stats.forEach(item => {
-        ethStats.value = item.statistics_eth
-        usdtStats.value = item.statistics_usdt
-        frozenEth.value = item.frozen_eth
-        frozenUsdt.value = item.frozen_usdt
-    })
+    ethStats.value = userStats.value.stats.statistics_eth
+    usdtStats.value = userStats.value.stats.statistics_usdt
+    frozenEth.value = userStats.value.stats.frozen_eth
+    frozenUsdt.value = userStats.value.stats.frozen_usdt
+
+    availableEth.value = userStats.value.profits.total_profit_eth
+    availableUsdt.value = userStats.value.profits.total_profit_usdt
 }
 </script>
 
