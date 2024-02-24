@@ -60,11 +60,11 @@
                     <div class="md:flex justify-between items-center mb-6">
                         <div class="md:leading-8">
                             <span class="text-xs">Statistics</span>
-                            <p class="text-white">2,567.84 USD</p>
+                            <p class="text-white">{{ usdtStats }} USD</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Frozen</span>
-                            <p class="text-white">4,785.31 USD</p>
+                            <p class="text-white">{{ frozenUsdt }} USD</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Available</span>
@@ -92,11 +92,11 @@
                     <div class="md:flex justify-between items-center mb-6">
                         <div class="md:leading-8">
                             <span class="text-xs">Statistics</span>
-                            <p class="text-white">2,567.84 USD</p>
+                            <p class="text-white">{{ ethStats }} ETH</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Frozen</span>
-                            <p class="text-white">4,785.31 USD</p>
+                            <p class="text-white">{{ frozenEth }} ETH</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Available</span>
@@ -110,7 +110,33 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import Card from 'primevue/card'
+import axiosClient from '@/services/axiosClient'
+
+const userStats = ref([])
+const ethStats = ref(null)
+const usdtStats = ref(null)
+const frozenEth = ref(null)
+const frozenUsdt = ref(null)
+
+const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
+
+onMounted(() => {
+    getUserStats()
+})
+
+const getUserStats = async () => {
+    const response = await axiosClient.get(`/get-wallet-data/${wallet}`)
+    userStats.value = response.data.user_stats
+
+    userStats.value.stats.forEach(item => {
+        ethStats.value = item.statistics_eth
+        usdtStats.value = item.statistics_usdt
+        frozenEth.value = item.frozen_eth
+        frozenUsdt.value = item.frozen_usdt
+    })
+}
 </script>
 
 <style scoped></style>
