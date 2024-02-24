@@ -11,7 +11,7 @@
 
                         <div class="md:leading-10 mb-3">
                             <h5>Total Revenue</h5>
-                            <span class="text-purple text-xl font-bold">{{ assets.total_revenues }}</span>
+                            <span class="text-purple text-xl font-bold">{{ parseFloat(assets.total_revenues).toFixed(3) }}</span>
                         </div>
                     </div>
                 </section>
