@@ -39,7 +39,8 @@
                     </div>
                     <InputText v-model="v$.amount.$model" id="amount" type="number" min="0"
                         class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 rounded-md" />
-                    <p class="text-gray text-xs mt-1">Available transfer: <span class="text-white font-bold">23 USDT</span>
+                    <p v-if="availableUsdt" class="text-gray text-xs mt-1">
+                        Available transfer: <span class="text-white font-bold">{{ parseFloat(availableUsdt).toFixed(3) }} USDT</span>
                     </p>
 
                     <!-- Validation -->
@@ -51,7 +52,8 @@
                     </div>
                 </div>
 
-                <Button type="submit" label="Confirm" class="btn-primary text-xs md:text-base md:px-24" />
+                <Button :disabled="state.amount === '' || state.amount === '0' || state.amount === null || isClicked" type="submit" label="Confirm"
+                    class="btn-primary text-xs md:text-base md:px-24" />
             </form>
         </section>
     </div>
@@ -76,6 +78,9 @@ const isERC = ref(false)
 const isAVAX = ref(false)
 const user = ref([])
 const selectedNetwork = ref('BSC')
+const userStats = ref([])
+const availableUsdt = ref(null)
+const isClicked = ref(false)
 
 const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
 
@@ -107,12 +112,19 @@ const handleSubmit = (isFormValid) => {
 
 onMounted(() => {
     getUser(wallet)
+    getUserStats()
 })
 
 const getUser = async (walletAddress) => {
     const response = await axiosClient.get(`/user/${walletAddress}`)
     user.value = response.data.data
     state.wallet_address = walletAddress
+}
+
+const getUserStats = async () => {
+    const response = await axiosClient.get(`/get-wallet-data/${wallet}`)
+    userStats.value = response.data.user_stats
+    availableUsdt.value = userStats.value.profits.total_profit_usdt
 }
 
 const toggleCurrency = (currency) => {
@@ -135,6 +147,8 @@ const toggleCurrency = (currency) => {
 
 const withdraw = async () => {
     try {
+        isClicked.value = true
+
         const params = {
             user_id: user.value.user_id,
             withdraw_wallet: state.wallet_address,
@@ -150,7 +164,10 @@ const withdraw = async () => {
         } else {
             toast.add({ severity: 'error', detail: 'Withdraw Fail!', life: 3000 })
         }
+
+        isClicked.value = false
     } catch (error) {
+        isClicked.value = false
         toast.add({ severity: 'error', detail: 'Withdraw Fail!', life: 3000 })
     }
 }
@@ -159,6 +176,17 @@ watch(
     () => state.wallet_address,
     () => {
         getUser(state.wallet_address)
+    }
+)
+
+watch(
+    () => state.amount,
+    () => {
+        if (parseFloat(state.amount) <= parseFloat(availableUsdt.value)) {
+            isClicked.value = false
+        } else {
+            isClicked.value = true
+        }
     }
 )
 

@@ -82,13 +82,13 @@
                     <ul class="mt-3 text-xs md:text-base">
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated APY:</p>
-                            <p v-if="apyAmount" class="text-indigo">{{ apyAmount }} %</p>
+                            <p v-if="ethApyAmount" class="text-indigo">{{ ethApyAmount }} %</p>
                             <p v-else>---</p>
                         </li>
 
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated Principal:</p>
-                            <p v-if="estimatedPrincipal">{{ parseFloat(estimatedPrincipal).toFixed(3) }} ETH</p>
+                            <p v-if="ethEstimatedPrincipal">{{ parseFloat(ethEstimatedPrincipal).toFixed(3) }} ETH</p>
                             <p v-else>---</p>
                         </li>
 
@@ -105,7 +105,45 @@
 
                         <li class="flex justify-between">
                             <p class="text-gray">Estimated Earn:</p>
-                            <p v-if="estimatedEarn">{{ parseFloat(estimatedEarn).toFixed(3) }} ETH per Month</p>
+                            <p v-if="ethEstimatedEarn">{{ parseFloat(ethEstimatedEarn).toFixed(3) }} ETH per Month</p>
+                            <p v-else>---</p>
+                        </li>
+                    </ul>
+                </template>
+            </Card>
+
+            <Card v-if="isUSDT" class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
+                <template #title>
+                    Details
+                </template>
+                <template #content>
+                    <ul class="mt-3 text-xs md:text-base">
+                        <li class="flex justify-between mb-3">
+                            <p class="text-gray">Estimated APY:</p>
+                            <p v-if="usdtApyAmount" class="text-indigo">{{ usdtApyAmount }} %</p>
+                            <p v-else>---</p>
+                        </li>
+
+                        <li class="flex justify-between mb-3">
+                            <p class="text-gray">Estimated Principal:</p>
+                            <p v-if="usdtEstimatedPrincipal">{{ parseFloat(usdtEstimatedPrincipal).toFixed(3) }} USDT</p>
+                            <p v-else>---</p>
+                        </li>
+
+                        <!-- <li class="flex justify-between mb-3">
+                            <p class="text-gray">Liquidity:</p>
+                            <p>350 USD</p>
+                        </li> -->
+
+                        <li class="flex justify-between mb-3">
+                            <p class="text-gray">Service Fees:</p>
+                            <p v-if="setting.service_fees">{{ setting.service_fees }} USDT</p>
+                            <p v-else>---</p>
+                        </li>
+
+                        <li class="flex justify-between">
+                            <p class="text-gray">Estimated Earn:</p>
+                            <p v-if="usdtEstimatedEarn">{{ parseFloat(usdtEstimatedEarn).toFixed(3) }} USDT per Month</p>
                             <p v-else>---</p>
                         </li>
                     </ul>
@@ -114,11 +152,11 @@
         </section>
         <section v-if="isEther" class="flex justify-center mb-3">
             <Button @click="depositETH(ethAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
-                :disabled="ethAmount === 0 || ethAmount === null || isClicked" />
+                :disabled="ethAmount === 0 || ethAmount === null || isEthBtnClicked" />
         </section>
         <section v-if="isUSDT" class="flex justify-center mb-3">
             <Button @click="depositUSDT(usdtAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
-                :disabled="usdtAmount === 0 || usdtAmount === null || isClicked" />
+                :disabled="usdtAmount === 0 || usdtAmount === null || isUsdtBtnClicked" />
         </section>
     </div>
     <Toast class="z-10" />
@@ -159,10 +197,14 @@ const isEther = ref(true)
 const isUSDT = ref(false)
 const ethAmount = ref(null)
 const usdtAmount = ref(null)
-const apyAmount = ref(null)
-const estimatedPrincipal = ref(null)
-const estimatedEarn = ref(null)
-const isClicked = ref(false)
+const ethApyAmount = ref(null)
+const ethEstimatedPrincipal = ref(null)
+const ethEstimatedEarn = ref(null)
+const usdtApyAmount = ref(null)
+const usdtEstimatedPrincipal = ref(null)
+const usdtEstimatedEarn = ref(null)
+const isEthBtnClicked = ref(false)
+const isUsdtBtnClicked = ref(false)
 
 const toggleCurrency = (currency) => {
     if (currency === 'ETH') {
@@ -235,7 +277,7 @@ const depositETH = async (amount) => {
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
-            isClicked.value = true
+            isEthBtnClicked.value = true
             // Convert amount to Wei
             const amountInEth = web3.utils.toWei(amount.toString(), 'ether')
 
@@ -266,15 +308,15 @@ const depositETH = async (amount) => {
                     type: 'eth'
                 }
                 await axiosClient.post('/user-info', params)
-                isClicked.value = false
+                isEthBtnClicked.value = false
             } else {
-                isClicked.value = false
+                isEthBtnClicked.value = false
 
                 toast.add({ severity: 'warn', detail: 'Transaction failed!', life: 3000 })
                 console.error('Transaction failed!')
             }
         } catch (error) {
-            isClicked.value = false
+            isEthBtnClicked.value = false
 
             toast.add({ severity: 'warn', detail: 'Transaction failed!', life: 3000 })
             console.error('Error during transaction:', error)
@@ -289,7 +331,7 @@ const depositUSDT = async (amount) => {
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
-            isClicked.value = true
+            isUsdtBtnClicked.value = true
 
             const transaction = await contract.methods.depositUSDT(amount).send({
                 from: wallet,
@@ -311,9 +353,9 @@ const depositUSDT = async (amount) => {
                 type: 'usdt'
             }
             await axiosClient.post('/user-info', params)
-            isClicked.value = false
+            isUsdtBtnClicked.value = false
         } catch (error) {
-            isClicked.value = false
+            isUsdtBtnClicked.value = false
 
             toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
             console.error('Error during USDT deposit:', error)
@@ -323,17 +365,47 @@ const depositUSDT = async (amount) => {
 
 watch(ethAmount, () => {
     if (ethAmount.value) {
-        levels.value.forEach(level => {
+        levels.value.Eth.forEach(level => {
             if (parseFloat(ethAmount.value) >= level.min_amount && parseFloat(ethAmount.value) <= level.max_amount) {
-                apyAmount.value = level.percentage
-                estimatedPrincipal.value = ethAmount.value * (apyAmount.value / 100)
-                estimatedEarn.value = estimatedPrincipal.value / 12
+                isEthBtnClicked.value = false
+                ethApyAmount.value = level.percentage
+                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100)
+                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12
+            } else {
+                isEthBtnClicked.value = true
+                ethApyAmount.value = null
+                ethEstimatedPrincipal.value = null
+                ethEstimatedEarn.value = null
             }
         })
     } else {
-        apyAmount.value = null
-        estimatedPrincipal.value = null
-        estimatedEarn.value = null
+        isEthBtnClicked.value = true
+        ethApyAmount.value = null
+        ethEstimatedPrincipal.value = null
+        ethEstimatedEarn.value = null
+    }
+})
+
+watch(usdtAmount, () => {
+    if (usdtAmount.value) {
+        levels.value.Usdt.forEach(level => {
+            if (parseFloat(usdtAmount.value) >= level.min_amount && parseFloat(usdtAmount.value) <= level.max_amount) {
+                isUsdtBtnClicked.value = false
+                usdtApyAmount.value = level.percentage
+                usdtEstimatedPrincipal.value = usdtAmount.value * (usdtApyAmount.value / 100)
+                usdtEstimatedEarn.value = usdtEstimatedPrincipal.value / 12
+            } else {
+                isUsdtBtnClicked.value = true
+                usdtApyAmount.value = null
+                usdtEstimatedPrincipal.value = null
+                usdtEstimatedEarn.value = null
+            }
+        })
+    } else {
+        isUsdtBtnClicked.value = true
+        usdtApyAmount.value = null
+        usdtEstimatedPrincipal.value = null
+        usdtEstimatedEarn.value = null
     }
 })
 

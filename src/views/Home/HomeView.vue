@@ -6,12 +6,14 @@
                     <div class="md:flex justify-between md:justify-center md:gap-60 text-white">
                         <div class="md:leading-10 mb-3">
                             <h5>Total Participants</h5>
-                            <span class="text-purple text-xl font-bold">{{ assets.total_users }}</span>
+                            <span v-if="assets.total_users" class="text-purple text-xl font-bold">{{ assets.total_users }}</span>
+                            <span v-else>---</span>
                         </div>
 
                         <div class="md:leading-10 mb-3">
                             <h5>Total Revenue</h5>
-                            <span class="text-purple text-xl font-bold">{{ parseFloat(assets.total_revenues).toFixed(3) }}</span>
+                            <span v-if="assets.total_revenues" class="text-purple text-xl font-bold">{{ parseFloat(assets.total_revenues).toFixed(3) }}</span>
+                            <span v-else>---</span>
                         </div>
                     </div>
                 </section>
@@ -28,12 +30,14 @@
                     <main class="flex justify-between md:justify-center md:gap-60 text-gray">
                         <div class="leading-10">
                             <h5 class="text-xs">Nodes</h5>
-                            <span class="text-indigo text-xl font-bold">{{ assets.total_nodes }}</span>
+                            <span v-if="assets.total_nodes" class="text-indigo text-xl font-bold">{{ assets.total_nodes }}</span>
+                            <span v-else>---</span>
                         </div>
 
                         <div class="leading-10">
                             <h5 class="text-xs">Staked</h5>
-                            <span class="text-indigo text-xl font-bold">{{ assets.total_stakes }}</span>
+                            <span v-if="assets.total_stakes" class="text-indigo text-xl font-bold">{{ assets.total_stakes }}</span>
+                            <span v-else>---</span>
                         </div>
                     </main>
                 </section>

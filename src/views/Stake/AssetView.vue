@@ -60,15 +60,18 @@
                     <div class="md:flex justify-between items-center mb-6">
                         <div class="md:leading-8">
                             <span class="text-xs">Statistics</span>
-                            <p class="text-white">{{ parseFloat(usdtStats).toFixed(3) }} USD</p>
+                            <p v-if="usdtStats" class="text-white">{{ parseFloat(usdtStats).toFixed(3) }} USDT</p>
+                            <p v-else>---</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Frozen</span>
-                            <p class="text-white">{{ parseFloat(frozenUsdt).toFixed(3) }} USD</p>
+                            <p v-if="frozenUsdt" class="text-white">{{ parseFloat(frozenUsdt).toFixed(3) }} USDT</p>
+                            <p v-else>---</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Available</span>
-                            <p class="text-white">{{ parseFloat(availableUsdt).toFixed(3) }} USD</p>
+                            <p v-if="availableUsdt" class="text-white">{{ parseFloat(availableUsdt).toFixed(3) }} USDT</p>
+                            <p v-else>---</p>
                         </div>
                     </div>
                 </section>
@@ -92,15 +95,18 @@
                     <div class="md:flex justify-between items-center mb-6">
                         <div class="md:leading-8">
                             <span class="text-xs">Statistics</span>
-                            <p class="text-white">{{ parseFloat(ethStats).toFixed(3) }} ETH</p>
+                            <p v-if="ethStats" class="text-white">{{ parseFloat(ethStats).toFixed(3) }} ETH</p>
+                            <p v-else>---</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Frozen</span>
-                            <p class="text-white">{{ parseFloat(frozenEth).toFixed(3) }} ETH</p>
+                            <p v-if="frozenEth" class="text-white">{{ parseFloat(frozenEth).toFixed(3) }} ETH</p>
+                            <p v-else>---</p>
                         </div>
                         <div class="md:leading-8">
                             <span class="text-xs">Available</span>
-                            <p class="text-white">{{ parseFloat(availableEth).toFixed(3) }} ETH</p>
+                            <p v-if="availableEth" class="text-white">{{ parseFloat(availableEth).toFixed(3) }} ETH</p>
+                            <p v-else>---</p>
                         </div>
                     </div>
                 </section>
