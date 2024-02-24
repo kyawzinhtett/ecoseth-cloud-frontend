@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="card md:flex items-center gap-10 mb-14">
+        <!-- <div class="card md:flex items-center gap-10 mb-14">
             <img class="w-[240px] mb-7" src="/image-2.png" alt="Tron Trx">
             <div class="w-full">
                 <h1 class="font-bold md:text-xl mb-6">TRX/USDT</h1>
@@ -45,7 +45,7 @@
                     <button class="btn-primary text-sm md:text-base">Stake</button>
                 </router-link>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 

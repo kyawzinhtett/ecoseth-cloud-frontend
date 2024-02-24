@@ -30,11 +30,11 @@
             </section>
         </template>
 
-        <section class="flex justify-between items-center mb-5">
-            <h1 class="text-lg md:text-xl font-semibold mb-3">Pool</h1>
+        <h1 class="text-lg md:text-xl font-semibold mb-3">Pool</h1>
+        <!-- <section class="flex justify-between items-center mb-5">
             <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..."
                 class="md:px-3 bg-[#141414]" />
-        </section>
+        </section> -->
         <section class="mb-5">
             <div class="bg-primary rounded-3xl flex justify-evenly py-3">
                 <p @click="toggleCurrency('ETH')" :class="{ 'font-semibold': isEther }"
@@ -48,8 +48,8 @@
             </div>
         </section>
         <section class="flex justify-between mb-5 text-sm md:text-base">
-            <p>1ETH = 1808.76 USDT</p>
-            <p>APY <span class="text-indigo">4.5% - 4.8%</span></p>
+            <p>1ETH = {{ setting.usdt_exchange_rate }} USDT</p>
+            <!-- <p>APY <span class="text-indigo">4.5% - 4.8%</span></p> -->
         </section>
         <section class="mb-5">
             <div v-if="isEther" class="flex items-center gap-3 mb-3">
@@ -80,27 +80,33 @@
                 </template>
                 <template #content>
                     <ul class="mt-3 text-xs md:text-base">
-                        <template v-if="apyAmount">
-                            <li class="flex justify-between mb-3">
-                                <p class="text-gray">Estimated APY:</p>
-                                <p class="text-indigo">{{ apyAmount }} %</p>
-                            </li>
-                        </template>
+                        <li class="flex justify-between mb-3">
+                            <p class="text-gray">Estimated APY:</p>
+                            <p v-if="apyAmount" class="text-indigo">{{ apyAmount }} %</p>
+                            <p v-else>---</p>
+                        </li>
+
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated Principal:</p>
-                            <p>350 USD</p>
+                            <p v-if="estimatedPrincipal">{{ parseFloat(estimatedPrincipal).toFixed(2) }} USDT</p>
+                            <p v-else>---</p>
                         </li>
-                        <li class="flex justify-between mb-3">
+
+                        <!-- <li class="flex justify-between mb-3">
                             <p class="text-gray">Liquidity:</p>
                             <p>350 USD</p>
-                        </li>
+                        </li> -->
+
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Service Fees:</p>
-                            <p>35 USDT</p>
+                            <p v-if="setting.service_fees">{{ setting.service_fees }} USDT</p>
+                            <p v-else>---</p>
                         </li>
+
                         <li class="flex justify-between">
                             <p class="text-gray">Estimated Earn:</p>
-                            <p>2.4523 USDT per month</p>
+                            <p v-if="estimatedEarn">{{ parseFloat(estimatedEarn).toFixed(3) }} USDT per Month</p>
+                            <p v-else>---</p>
                         </li>
                     </ul>
                 </template>
@@ -144,6 +150,7 @@ const web3 = new Web3(window.ethereum)
 const contract = new web3.eth.Contract(contractABI, contractAddress)
 
 const levels = ref([])
+const setting = ref([])
 const walletAddress = ref('')
 const ownerAddress = ref('')
 const walletBalance = ref()
@@ -153,6 +160,8 @@ const isUSDT = ref(false)
 const ethAmount = ref(null)
 const usdtAmount = ref(null)
 const apyAmount = ref(null)
+const estimatedPrincipal = ref(null)
+const estimatedEarn = ref(null)
 const isClicked = ref(false)
 
 const toggleCurrency = (currency) => {
@@ -174,6 +183,7 @@ walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
 onMounted(() => {
     getInfo()
     getLevel()
+    getSetting()
 })
 
 // Get info
@@ -210,6 +220,11 @@ const getInfo = async () => {
 const getLevel = async () => {
     const response = await axiosClient.get('/level')
     levels.value = response.data.data
+}
+
+const getSetting = async () => {
+    const response = await axiosClient.get('/home-assets')
+    setting.value = response.data.setting
 }
 
 // Deposit Eth
@@ -311,10 +326,14 @@ watch(ethAmount, () => {
         levels.value.forEach(level => {
             if (parseFloat(ethAmount.value) >= level.min_amount && parseFloat(ethAmount.value) <= level.max_amount) {
                 apyAmount.value = level.percentage
+                estimatedPrincipal.value = (ethAmount.value * setting.value.usdt_exchange_rate) * (apyAmount.value / 100)
+                estimatedEarn.value = estimatedPrincipal.value / 12
             }
         })
     } else {
         apyAmount.value = null
+        estimatedPrincipal.value = null
+        estimatedEarn.value = null
     }
 })
 
