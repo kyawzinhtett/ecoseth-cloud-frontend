@@ -14,13 +14,19 @@
                                     </div>
                                 </label>
                             </div>
-                            <InputText type="number" min="0"
+                            <InputText v-model="ethAmount" type="number" min="0"
                                 class="bg-secondary border border-gray-700 w-full p-3 rounded-md text-white"
                                 placeholder="Please enter amount" />
+
+                            <section class="flex justify-between mb-5 text-sm md:text-base mt-3">
+                                <p class="text-xs">Available transfer: <span class="text-white font-bold">{{
+                                    parseFloat(walletBalance).toFixed(3) }} ETH</span></p>
+                                <p class="text-xs text-white">1ETH = {{ setting.usdt_exchange_rate }} USDT</p>
+                            </section>
                         </div>
 
                         <div class="mb-4 flex justify-center">
-                            <button
+                            <button @click="fetchAll"
                                 class="flex items-center gap-2 btn-primary px-6 md:px-12 rounded-3xl text-xs md:text-base">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-4">
                                     <path
@@ -47,22 +53,86 @@
                         </div>
 
                         <div class="flex justify-center">
-                            <Button label="Exchange" class="btn-primary text-xs md:text-base md:px-24" />
+                            <Button @click="handleSwap"
+                                :disabled="ethAmount === '' || ethAmount === '0' || ethAmount === null || isClicked"
+                                label="Exchange" class="btn-primary text-xs md:text-base md:px-24" />
                         </div>
                     </section>
                 </section>
             </template>
         </Card>
     </div>
+    <Toast class="z-10" />
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { Web3 } from 'web3'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { useStore } from '@/store/store.js'
+import axiosClient from '@/services/axiosClient'
 
+const web3 = new Web3(window.ethereum)
+const store = useStore()
+const toast = useToast()
+const walletBalance = ref()
+const setting = ref([])
+const ethAmount = ref(null)
 const usdtAmount = ref(0)
+const isClicked = ref(false)
+
+const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
+const balance = localStorage.getItem('walletBalance') || store.getWalletBalance
+
+onMounted(() => {
+    getSetting()
+})
+
+const getSetting = async () => {
+    const response = await axiosClient.get('/home-assets')
+    setting.value = response.data.setting
+    walletBalance.value = web3.utils.fromWei(balance, 'ether')
+}
+
+const fetchAll = () => {
+    ethAmount.value = parseFloat(walletBalance.value).toFixed(3)
+    usdtAmount.value = parseFloat(walletBalance.value * setting.value.usdt_exchange_rate).toFixed(3)
+}
+
+const handleSwap = async () => {
+    const params = {
+        eth: ethAmount.value,
+        usdt: usdtAmount.value
+    }
+
+    const response = await axiosClient.post(`/swap-usdt/${wallet}`, params)
+
+    if (response && response.data) {
+        ethAmount.value = null
+        usdtAmount.value = 0
+
+        toast.add({ severity: 'success', detail: 'Swap Success!', life: 3000 })
+    } else {
+        toast.add({ severity: 'error', detail: 'Swap Fail!', life: 3000 })
+    }
+}
+
+watch(ethAmount, () => {
+    if (parseFloat(ethAmount.value) <= parseFloat(walletBalance.value)) {
+        isClicked.value = false
+
+        usdtAmount.value = parseFloat(ethAmount.value * setting.value.usdt_exchange_rate).toFixed(3)
+    } else {
+        isClicked.value = true
+
+        usdtAmount.value = 0
+    }
+})
+
 
 </script>
 
