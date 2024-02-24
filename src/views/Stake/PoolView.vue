@@ -47,10 +47,10 @@
                 </p>
             </div>
         </section>
-        <section class="flex justify-between mb-5 text-sm md:text-base">
+        <!-- <section class="flex justify-between mb-5 text-sm md:text-base">
             <p>1ETH = {{ setting.usdt_exchange_rate }} USDT</p>
-            <!-- <p>APY <span class="text-indigo">4.5% - 4.8%</span></p> -->
-        </section>
+            <p>APY <span class="text-indigo">4.5% - 4.8%</span></p>
+        </section> -->
         <section class="mb-5">
             <div v-if="isEther" class="flex items-center gap-3 mb-3">
                 <img src="/ether.svg" alt="Ether" class="w-[50px] h-[50px]">
