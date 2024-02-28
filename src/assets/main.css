@@ -5,14 +5,14 @@
 
 html,
 body {
-    font-family: 'Khula', sans-serif;
+    font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
     height: 100%;
     color: #ffffff;
     background-color: #000000;
 }
 
 #app {
-    font-family: 'Khula', sans-serif;
+    font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
 }
 
 .header-text {
