@@ -16,7 +16,7 @@
                             </div>
                             <InputText v-model="ethAmount" type="number" min="0"
                                 class="bg-secondary border border-gray-700 w-full p-3 rounded-md text-white"
-                                placeholder="Please enter amount" />
+                                placeholder="Please enter amount" :disabled="walletBalance === '0'" />
 
                             <section class="flex justify-between mb-5 text-sm md:text-base mt-3">
                                 <p v-if="walletBalance" class="text-xs">
