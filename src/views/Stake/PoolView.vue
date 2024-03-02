@@ -31,10 +31,7 @@
         </template>
 
         <h1 class="text-lg md:text-xl font-semibold mb-3">Pool</h1>
-        <!-- <section class="flex justify-between items-center mb-5">
-            <Dropdown v-model="selectedOption" :options="options" optionLabel="name" placeholder="Select ..."
-                class="md:px-3 bg-[#141414]" />
-        </section> -->
+
         <section class="mb-5">
             <div class="bg-primary rounded-3xl flex justify-evenly py-3">
                 <p @click="toggleCurrency('ETH')" :class="{ 'font-semibold': isEther }"
@@ -47,10 +44,7 @@
                 </p>
             </div>
         </section>
-        <!-- <section class="flex justify-between mb-5 text-sm md:text-base">
-            <p>1ETH = {{ setting.usdt_exchange_rate }} USDT</p>
-            <p>APY <span class="text-indigo">4.5% - 4.8%</span></p>
-        </section> -->
+
         <section class="mb-5">
             <div v-if="isEther" class="flex items-center gap-3 mb-3">
                 <img src="/ether.svg" alt="Ether" class="w-[50px] h-[50px]">
@@ -92,11 +86,6 @@
                             <p v-else>---</p>
                         </li>
 
-                        <!-- <li class="flex justify-between mb-3">
-                            <p class="text-gray">Liquidity:</p>
-                            <p>350 USD</p>
-                        </li> -->
-
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Service Fees:</p>
                             <p v-if="setting.service_fees">{{ setting.service_fees }} USDT</p>
@@ -130,11 +119,6 @@
                             <p v-else>---</p>
                         </li>
 
-                        <!-- <li class="flex justify-between mb-3">
-                            <p class="text-gray">Liquidity:</p>
-                            <p>350 USD</p>
-                        </li> -->
-
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Service Fees:</p>
                             <p v-if="setting.service_fees">{{ setting.service_fees }} USDT</p>
@@ -166,26 +150,22 @@
 import { ref, onMounted, watch } from 'vue'
 import { Web3 } from 'web3'
 import Button from 'primevue/button'
-// import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Card from 'primevue/card'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-const toast = useToast()
 import { useStore } from '@/store/store.js'
 import { contractABI } from '@/contracts/contractConfig'
+import { tokenABI } from '@/contracts/tokenABI'
 import axiosClient from '@/services/axiosClient'
 
-// const selectedOption = ref()
-// const options = ref([
-//     { name: 'ETH/USDT', code: 'ETH' },
-//     { name: 'TRX/USDT', code: 'TRX' }
-// ])
-
+const toast = useToast()
 const store = useStore()
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
+const tokenAddress = import.meta.env.VITE_TOKEN_CONTRACT_ADDRESS
 const web3 = new Web3(window.ethereum)
 const contract = new web3.eth.Contract(contractABI, contractAddress)
+const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress)
 
 const levels = ref([])
 const setting = ref([])
@@ -269,6 +249,17 @@ const getSetting = async () => {
     setting.value = response.data.setting
 }
 
+// Approve the spender to spend the specified amount of USDT tokens
+const approveToken = async (spenderAddress, amount) => {
+    try {
+        const tx = await tokenContract.methods.approve(spenderAddress, amount).send({ from: wallet });
+        console.log('Transaction hash:', tx.transactionHash);
+        console.log('Approval successful!');
+    } catch (error) {
+        console.error('Error approving contract:', error);
+    }
+}
+
 // Deposit Eth
 const depositETH = async (amount) => {
     // Ensure the user has connected their wallet
@@ -331,6 +322,8 @@ const depositUSDT = async (amount) => {
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
+            approveToken(contractAddress, 10000000)
+
             isUsdtBtnClicked.value = true
 
             const transaction = await contract.methods.depositUSDT(amount).send({
