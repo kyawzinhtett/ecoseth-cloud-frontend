@@ -56,7 +56,8 @@
             </div>
             <div v-if="isEther" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="ethAmount" type="number" min="0"
-                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter unit in Wei" />
+                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3"
+                    placeholder="Enter unit in Wei" />
             </div>
             <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="usdtAmount" type="number" min="0"
@@ -69,9 +70,11 @@
 
         <section class="mb-6">
             <Card v-if="isEther" class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
+
                 <template #title>
                     Details
                 </template>
+
                 <template #content>
                     <ul class="mt-3 text-xs md:text-base">
                         <li class="flex justify-between mb-3">
@@ -102,9 +105,11 @@
             </Card>
 
             <Card v-if="isUSDT" class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
+
                 <template #title>
                     Details
                 </template>
+
                 <template #content>
                     <ul class="mt-3 text-xs md:text-base">
                         <li class="flex justify-between mb-3">
@@ -115,7 +120,8 @@
 
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated Principal:</p>
-                            <p v-if="usdtEstimatedPrincipal">{{ parseFloat(usdtEstimatedPrincipal).toFixed(3) }} USDT</p>
+                            <p v-if="usdtEstimatedPrincipal">{{ parseFloat(usdtEstimatedPrincipal).toFixed(3) }} USDT
+                            </p>
                             <p v-else>---</p>
                         </li>
 
@@ -127,7 +133,8 @@
 
                         <li class="flex justify-between">
                             <p class="text-gray">Estimated Earn:</p>
-                            <p v-if="usdtEstimatedEarn">{{ parseFloat(usdtEstimatedEarn).toFixed(3) }} USDT per Month</p>
+                            <p v-if="usdtEstimatedEarn">{{ parseFloat(usdtEstimatedEarn).toFixed(3) }} USDT per Month
+                            </p>
                             <p v-else>---</p>
                         </li>
                     </ul>
@@ -359,16 +366,18 @@ const depositUSDT = async (amount) => {
 watch(ethAmount, () => {
     if (ethAmount.value) {
         levels.value.Eth.forEach(level => {
-            if (parseFloat(ethAmount.value) >= level.min_amount && parseFloat(ethAmount.value) <= level.max_amount) {
-                isEthBtnClicked.value = false
-                ethApyAmount.value = level.percentage
-                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100)
-                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12
-            } else {
+            if (parseFloat(ethAmount.value) <= parseFloat(level.min_amount) && parseFloat(ethAmount.value) >= parseFloat(level.max_amount)) {
                 isEthBtnClicked.value = true
                 ethApyAmount.value = null
                 ethEstimatedPrincipal.value = null
                 ethEstimatedEarn.value = null
+            }
+
+            if (parseFloat(ethAmount.value) >= parseFloat(level.min_amount) && parseFloat(ethAmount.value) <= parseFloat(level.max_amount)) {
+                isEthBtnClicked.value = false
+                ethApyAmount.value = level.percentage
+                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100)
+                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12
             }
         })
     } else {
