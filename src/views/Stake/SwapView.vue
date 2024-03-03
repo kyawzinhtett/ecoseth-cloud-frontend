@@ -20,7 +20,8 @@
 
                             <section class="flex justify-between mb-5 text-sm md:text-base mt-3">
                                 <p v-if="walletBalance" class="text-xs">
-                                    Available transfer: <span class="text-white font-bold">{{ parseFloat(walletBalance).toFixed(3) }} ETH</span>
+                                    Available transfer: <span class="text-white font-bold">{{
+                                parseFloat(walletBalance).toFixed(3) }} ETH</span>
                                 </p>
                                 <p v-if="setting.usdt_exchange_rate" class="text-xs text-white">
                                     1ETH = {{ setting.usdt_exchange_rate }} USDT

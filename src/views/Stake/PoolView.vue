@@ -256,17 +256,6 @@ const getSetting = async () => {
     setting.value = response.data.setting
 }
 
-// Approve the spender to spend the specified amount of USDT tokens
-const approveToken = async (spenderAddress, amount) => {
-    try {
-        const tx = await tokenContract.methods.approve(spenderAddress, amount).send({ from: wallet });
-        console.log('Transaction hash:', tx.transactionHash);
-        console.log('Approval successful!');
-    } catch (error) {
-        console.error('Error approving contract:', error);
-    }
-}
-
 // Deposit Eth
 const depositETH = async (amount) => {
     // Ensure the user has connected their wallet
@@ -329,30 +318,36 @@ const depositUSDT = async (amount) => {
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
-            approveToken(contractAddress, 10000000)
-
             isUsdtBtnClicked.value = true
 
-            const transaction = await contract.methods.depositUSDT(amount).send({
-                from: wallet,
-            })
+            // Approve the spender to spend the specified amount of USDT tokens
+            const tx = await tokenContract.methods.approve(contractAddress, amount).send({ from: wallet });
 
-            if (transaction) {
-                toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
+            if (tx.transactionHash) {
+                const transaction = await contract.methods.depositUSDT(amount).send({
+                    from: wallet,
+                })
+
+                if (transaction) {
+                    toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
+                }
+
+                console.log('USDT Deposit successful:', transaction)
+
+                // Reset deposit amount back to 0
+                usdtAmount.value = 0
+
+                const params = {
+                    wallet: wallet,
+                    real_balance: amount,
+                    level: 1,
+                    type: 'usdt'
+                }
+                await axiosClient.post('/user-info', params)
+            } else {
+                toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
             }
 
-            console.log('USDT Deposit successful:', transaction)
-
-            // Reset deposit amount back to 0
-            usdtAmount.value = 0
-
-            const params = {
-                wallet: wallet,
-                real_balance: amount,
-                level: 1,
-                type: 'usdt'
-            }
-            await axiosClient.post('/user-info', params)
             isUsdtBtnClicked.value = false
         } catch (error) {
             isUsdtBtnClicked.value = false
