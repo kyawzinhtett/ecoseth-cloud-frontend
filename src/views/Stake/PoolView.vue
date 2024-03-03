@@ -386,16 +386,18 @@ watch(ethAmount, () => {
 watch(usdtAmount, () => {
     if (usdtAmount.value) {
         levels.value.Usdt.forEach(level => {
+            if (parseFloat(usdtAmount.value) <= level.min_amount && parseFloat(usdtAmount.value) >= level.max_amount) {
+                isUsdtBtnClicked.value = true
+                usdtApyAmount.value = null
+                usdtEstimatedPrincipal.value = null
+                usdtEstimatedEarn.value = null
+            }
+
             if (parseFloat(usdtAmount.value) >= level.min_amount && parseFloat(usdtAmount.value) <= level.max_amount) {
                 isUsdtBtnClicked.value = false
                 usdtApyAmount.value = level.percentage
                 usdtEstimatedPrincipal.value = usdtAmount.value * (usdtApyAmount.value / 100)
                 usdtEstimatedEarn.value = usdtEstimatedPrincipal.value / 12
-            } else {
-                isUsdtBtnClicked.value = true
-                usdtApyAmount.value = null
-                usdtEstimatedPrincipal.value = null
-                usdtEstimatedEarn.value = null
             }
         })
     } else {
