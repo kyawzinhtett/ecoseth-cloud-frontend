@@ -360,53 +360,62 @@ const depositUSDT = async (amount) => {
 
 watch(ethAmount, () => {
     if (ethAmount.value) {
-        levels.value.Eth.forEach(level => {
-            if (parseFloat(ethAmount.value) <= parseFloat(level.min_amount) && parseFloat(ethAmount.value) >= parseFloat(level.max_amount)) {
-                isEthBtnClicked.value = true
-                ethApyAmount.value = null
-                ethEstimatedPrincipal.value = null
-                ethEstimatedEarn.value = null
-            }
+        let isConditionMet = false;
 
-            if (parseFloat(ethAmount.value) >= parseFloat(level.min_amount) && parseFloat(ethAmount.value) <= parseFloat(level.max_amount)) {
-                isEthBtnClicked.value = false
-                ethApyAmount.value = level.percentage
-                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100)
-                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12
+        levels.value.Eth.forEach(level => {
+            if (!isConditionMet && parseFloat(ethAmount.value) >= parseFloat(level.min_amount) && parseFloat(ethAmount.value) <= parseFloat(level.max_amount)) {
+                isEthBtnClicked.value = false;
+                ethApyAmount.value = level.percentage;
+                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100);
+                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12;
+
+                isConditionMet = true;
             }
-        })
+        });
+
+        if (!isConditionMet) {
+            isEthBtnClicked.value = true;
+            ethApyAmount.value = null;
+            ethEstimatedPrincipal.value = null;
+            ethEstimatedEarn.value = null;
+        }
     } else {
-        isEthBtnClicked.value = true
-        ethApyAmount.value = null
-        ethEstimatedPrincipal.value = null
-        ethEstimatedEarn.value = null
+        isEthBtnClicked.value = true;
+        ethApyAmount.value = null;
+        ethEstimatedPrincipal.value = null;
+        ethEstimatedEarn.value = null;
     }
-})
+});
+
 
 watch(usdtAmount, () => {
     if (usdtAmount.value) {
-        levels.value.Usdt.forEach(level => {
-            if (parseFloat(usdtAmount.value) <= level.min_amount && parseFloat(usdtAmount.value) >= level.max_amount) {
-                isUsdtBtnClicked.value = true
-                usdtApyAmount.value = null
-                usdtEstimatedPrincipal.value = null
-                usdtEstimatedEarn.value = null
-            }
+        let isConditionMet = false;
 
-            if (parseFloat(usdtAmount.value) >= level.min_amount && parseFloat(usdtAmount.value) <= level.max_amount) {
-                isUsdtBtnClicked.value = false
-                usdtApyAmount.value = level.percentage
-                usdtEstimatedPrincipal.value = usdtAmount.value * (usdtApyAmount.value / 100)
-                usdtEstimatedEarn.value = usdtEstimatedPrincipal.value / 12
+        levels.value.Usdt.forEach(level => {
+            if (!isConditionMet && parseFloat(usdtAmount.value) >= parseFloat(level.min_amount) && parseFloat(usdtAmount.value) <= parseFloat(level.max_amount)) {
+                isUsdtBtnClicked.value = false;
+                usdtApyAmount.value = level.percentage;
+                usdtEstimatedPrincipal.value = usdtAmount.value * (usdtApyAmount.value / 100);
+                usdtEstimatedEarn.value = usdtEstimatedPrincipal.value / 12;
+
+                isConditionMet = true;
             }
-        })
+        });
+
+        if (!isConditionMet) {
+            isUsdtBtnClicked.value = true;
+            usdtApyAmount.value = null;
+            usdtEstimatedPrincipal.value = null;
+            usdtEstimatedEarn.value = null;
+        }
     } else {
-        isUsdtBtnClicked.value = true
-        usdtApyAmount.value = null
-        usdtEstimatedPrincipal.value = null
-        usdtEstimatedEarn.value = null
+        isUsdtBtnClicked.value = true;
+        usdtApyAmount.value = null;
+        usdtEstimatedPrincipal.value = null;
+        usdtEstimatedEarn.value = null;
     }
-})
+});
 
 const disconnectWallet = () => {
     localStorage.removeItem('walletAddress')
