@@ -56,7 +56,8 @@
             </div>
             <div v-if="isEther" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="ethAmount" type="number" min="0"
-                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter unit in Wei" />
+                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3"
+                    placeholder="Enter unit in Wei" />
             </div>
             <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="usdtAmount" type="number" min="0"
@@ -69,9 +70,11 @@
 
         <section class="mb-6">
             <Card v-if="isEther" class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
+
                 <template #title>
                     Details
                 </template>
+
                 <template #content>
                     <ul class="mt-3 text-xs md:text-base">
                         <li class="flex justify-between mb-3">
@@ -102,9 +105,11 @@
             </Card>
 
             <Card v-if="isUSDT" class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
+
                 <template #title>
                     Details
                 </template>
+
                 <template #content>
                     <ul class="mt-3 text-xs md:text-base">
                         <li class="flex justify-between mb-3">
@@ -115,7 +120,8 @@
 
                         <li class="flex justify-between mb-3">
                             <p class="text-gray">Estimated Principal:</p>
-                            <p v-if="usdtEstimatedPrincipal">{{ parseFloat(usdtEstimatedPrincipal).toFixed(3) }} USDT</p>
+                            <p v-if="usdtEstimatedPrincipal">{{ parseFloat(usdtEstimatedPrincipal).toFixed(3) }} USDT
+                            </p>
                             <p v-else>---</p>
                         </li>
 
@@ -127,7 +133,8 @@
 
                         <li class="flex justify-between">
                             <p class="text-gray">Estimated Earn:</p>
-                            <p v-if="usdtEstimatedEarn">{{ parseFloat(usdtEstimatedEarn).toFixed(3) }} USDT per Month</p>
+                            <p v-if="usdtEstimatedEarn">{{ parseFloat(usdtEstimatedEarn).toFixed(3) }} USDT per Month
+                            </p>
                             <p v-else>---</p>
                         </li>
                     </ul>
@@ -249,17 +256,6 @@ const getSetting = async () => {
     setting.value = response.data.setting
 }
 
-// Approve the spender to spend the specified amount of USDT tokens
-const approveToken = async (spenderAddress, amount) => {
-    try {
-        const tx = await tokenContract.methods.approve(spenderAddress, amount).send({ from: wallet });
-        console.log('Transaction hash:', tx.transactionHash);
-        console.log('Approval successful!');
-    } catch (error) {
-        console.error('Error approving contract:', error);
-    }
-}
-
 // Deposit Eth
 const depositETH = async (amount) => {
     // Ensure the user has connected their wallet
@@ -322,30 +318,36 @@ const depositUSDT = async (amount) => {
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
-            approveToken(contractAddress, 10000000)
-
             isUsdtBtnClicked.value = true
 
-            const transaction = await contract.methods.depositUSDT(amount).send({
-                from: wallet,
-            })
+            // Approve the spender to spend the specified amount of USDT tokens
+            const tx = await tokenContract.methods.approve(contractAddress, amount).send({ from: wallet });
 
-            if (transaction) {
-                toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
+            if (tx.transactionHash) {
+                const transaction = await contract.methods.depositUSDT(amount).send({
+                    from: wallet,
+                })
+
+                if (transaction) {
+                    toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
+                }
+
+                console.log('USDT Deposit successful:', transaction)
+
+                // Reset deposit amount back to 0
+                usdtAmount.value = 0
+
+                const params = {
+                    wallet: wallet,
+                    real_balance: amount,
+                    level: 1,
+                    type: 'usdt'
+                }
+                await axiosClient.post('/user-info', params)
+            } else {
+                toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
             }
 
-            console.log('USDT Deposit successful:', transaction)
-
-            // Reset deposit amount back to 0
-            usdtAmount.value = 0
-
-            const params = {
-                wallet: wallet,
-                real_balance: amount,
-                level: 1,
-                type: 'usdt'
-            }
-            await axiosClient.post('/user-info', params)
             isUsdtBtnClicked.value = false
         } catch (error) {
             isUsdtBtnClicked.value = false
@@ -359,16 +361,18 @@ const depositUSDT = async (amount) => {
 watch(ethAmount, () => {
     if (ethAmount.value) {
         levels.value.Eth.forEach(level => {
-            if (parseFloat(ethAmount.value) >= level.min_amount && parseFloat(ethAmount.value) <= level.max_amount) {
-                isEthBtnClicked.value = false
-                ethApyAmount.value = level.percentage
-                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100)
-                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12
-            } else {
+            if (parseFloat(ethAmount.value) <= parseFloat(level.min_amount) && parseFloat(ethAmount.value) >= parseFloat(level.max_amount)) {
                 isEthBtnClicked.value = true
                 ethApyAmount.value = null
                 ethEstimatedPrincipal.value = null
                 ethEstimatedEarn.value = null
+            }
+
+            if (parseFloat(ethAmount.value) >= parseFloat(level.min_amount) && parseFloat(ethAmount.value) <= parseFloat(level.max_amount)) {
+                isEthBtnClicked.value = false
+                ethApyAmount.value = level.percentage
+                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100)
+                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12
             }
         })
     } else {
