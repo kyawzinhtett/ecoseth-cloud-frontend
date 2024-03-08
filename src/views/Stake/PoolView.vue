@@ -19,14 +19,16 @@
 
         <template v-else-if="!walletAddress">
             <section class="flex justify-end items-center gap-2 mb-6">
-                <router-link :to="{ name: 'wallet' }">
+                <!-- <router-link :to="{ name: 'wallet' }">
                     <Button class="btn-primary px-2 py-2 text-white">
                         <div class="flex justify-center gap-3">
                             <span class="text-xs">Wallet</span>
                             <i class="pi pi-wallet"></i>
                         </div>
                     </Button>
-                </router-link>
+                </router-link> -->
+
+                <w3m-button size="sm" label="Wallet" balance="show" />
             </section>
         </template>
 
@@ -155,6 +157,9 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
+import { mainnet, arbitrum, sepolia } from 'viem/chains'
+import { getAccount, reconnect } from '@wagmi/core'
 import { Web3 } from 'web3'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
@@ -192,6 +197,39 @@ const usdtEstimatedPrincipal = ref(null)
 const usdtEstimatedEarn = ref(null)
 const isEthBtnClicked = ref(false)
 const isUsdtBtnClicked = ref(false)
+
+const projectId = import.meta.env.VITE_PROJECT_ID
+
+const metadata = {
+    name: 'Web3Modal',
+    description: 'Web3Modal Example',
+    url: 'https://web3modal.com',
+    icons: ['https://avatars.githubusercontent.com/u/37784886']
+}
+
+const chains = [mainnet, arbitrum, sepolia]
+
+const config = defaultWagmiConfig({
+    chains,
+    projectId,
+    metadata,
+    enableWalletConnect: true,
+    enableInjected: true,
+    enableEIP6963: true,
+    enableCoinbase: true
+})
+
+reconnect(config)
+
+createWeb3Modal({
+    wagmiConfig: config,
+    projectId,
+    enableAnalytics: true
+})
+
+const account = getAccount(config)
+
+console.log(account);
 
 const toggleCurrency = (currency) => {
     if (currency === 'ETH') {
