@@ -28,7 +28,7 @@
                     </Button>
                 </router-link> -->
 
-                <w3m-button size="sm" label="Wallet" balance="show" />
+                <w3m-button size="sm" label="Wallet" balance="show" @click="handleConnect" />
             </section>
         </template>
 
@@ -227,9 +227,16 @@ createWeb3Modal({
     enableAnalytics: true
 })
 
-const account = getAccount(config)
+let wallet
 
-console.log(account);
+const handleConnect = async () => {
+    setTimeout(function () {
+        const provider = localStorage.getItem('wagmi.store')
+        wallet = JSON.parse(provider).state.connections.value[0][1].accounts[0]
+
+        console.log(wallet)
+    }, 6000)
+}
 
 const toggleCurrency = (currency) => {
     if (currency === 'ETH') {
@@ -241,8 +248,8 @@ const toggleCurrency = (currency) => {
     }
 }
 
-const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
-const balance = localStorage.getItem('walletBalance') || store.getWalletBalance
+// const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
+// const balance = localStorage.getItem('walletBalance') || store.getWalletBalance
 
 // Slice wallet address
 walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
