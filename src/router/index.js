@@ -18,11 +18,11 @@ const router = createRouter({
             name: 'pool',
             component: () => import('@/views/Stake/PoolView.vue')
         },
-        {
-            path: '/wallet',
-            name: 'wallet',
-            component: () => import('@/views/Stake/WalletView.vue')
-        },
+        // {
+        //     path: '/wallet',
+        //     name: 'wallet',
+        //     component: () => import('@/views/Stake/WalletView.vue')
+        // },
         {
             path: '/asset',
             name: 'asset',

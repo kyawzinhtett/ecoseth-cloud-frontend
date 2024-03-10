@@ -1,36 +1,40 @@
 <template>
     <div class="mt-4 text-sm md:text-base">
-        <template v-if="walletAddress">
-            <section class="flex justify-end items-center gap-2 mb-6">
-                <router-link v-if="walletAddress" :to="{ name: 'asset' }">
+
+        <section class="flex justify-end items-center gap-2 mb-6">
+            <template v-if="!account.address">
+                <Button class="btn-primary px-2 py-2 text-white" @click="connect()">
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xs">{{ loading.connecting ? 'Connecting...' : 'Wallet' }}</span>
+                        <i class="pi pi-wallet"></i>
+                    </div>
+                </Button>
+            </template>
+
+            <template v-else>
+                <router-link :to="{ name: 'asset' }">
                     <Button class="btn-primary px-2 py-2 text-white">
-                        <div class="flex gap-3">
-                            <span class="text-xs">{{ walletAddress }}</span>
+                        <div class="flex justify-center gap-3">
+                            <span class="text-xs">{{ account.shortAddress }}</span>
                             <i class="pi pi-wallet"></i>
                         </div>
                     </Button>
                 </router-link>
 
-                <Button class="btn-primary px-2 py-2 text-white" @click="disconnectWallet">
-                    <span class="text-xs">Disconnect</span>
+                <Button class="btn-primary px-2 py-2 text-white" @click="selectChain">
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xs">Switch Network</span>
+                    </div>
                 </Button>
-            </section>
-        </template>
 
-        <template v-else-if="!walletAddress">
-            <section class="flex justify-end items-center gap-2 mb-6">
-                <!-- <router-link :to="{ name: 'wallet' }">
-                    <Button class="btn-primary px-2 py-2 text-white">
-                        <div class="flex justify-center gap-3">
-                            <span class="text-xs">Wallet</span>
-                            <i class="pi pi-wallet"></i>
-                        </div>
-                    </Button>
-                </router-link> -->
+                <Button class="btn-primary px-2 py-2 text-white" @click="disconnect">
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xs">{{ loading.logouting ? 'Disconnect...' : 'Disconnect' }}</span>
+                    </div>
+                </Button>
+            </template>
 
-                <w3m-button size="sm" label="Wallet" balance="show" @click="handleConnect" />
-            </section>
-        </template>
+        </section>
 
         <h1 class="text-lg md:text-xl font-semibold mb-3">Pool</h1>
 
@@ -156,10 +160,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
-import { mainnet, arbitrum, sepolia } from 'viem/chains'
-import { getAccount, reconnect } from '@wagmi/core'
+import { ref, onMounted, watch, reactive } from 'vue'
 import { Web3 } from 'web3'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
@@ -170,6 +171,18 @@ import { useStore } from '@/store/store.js'
 import { contractABI } from '@/contracts/contractConfig'
 import { tokenABI } from '@/contracts/tokenABI'
 import axiosClient from '@/services/axiosClient'
+import {
+    $off,
+    $on,
+    Events,
+    account,
+    chain,
+    getAvailableChains,
+    connect as masterConnect,
+    disconnect as masterDisconnect,
+    switchChain as masterSwitchChain,
+    selectChain
+} from '@kolirt/vue-web3-auth'
 
 const toast = useToast()
 const store = useStore()
@@ -179,12 +192,16 @@ const web3 = new Web3(window.ethereum)
 const contract = new web3.eth.Contract(contractABI, contractAddress)
 const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress)
 
+const loading = reactive({
+    connecting: false,
+    connectingTo: {},
+    switchingTo: {},
+    logouting: false
+})
 const levels = ref([])
 const setting = ref([])
 const walletAddress = ref('')
-const ownerAddress = ref('')
 const walletBalance = ref()
-const networkID = ref('')
 const isEther = ref(true)
 const isUSDT = ref(false)
 const ethAmount = ref(null)
@@ -198,45 +215,63 @@ const usdtEstimatedEarn = ref(null)
 const isEthBtnClicked = ref(false)
 const isUsdtBtnClicked = ref(false)
 
-const projectId = import.meta.env.VITE_PROJECT_ID
+// Wallet Connect
+const connect = async (chain) => {
+    const handler = (state) => {
+        if (!state) {
+            if (chain) {
+                loading.connectingTo[chain.id] = false
+            } else {
+                loading.connecting = false
+            }
 
-const metadata = {
-    name: 'Web3Modal',
-    description: 'Web3Modal Example',
-    url: 'https://web3modal.com',
-    icons: ['https://avatars.githubusercontent.com/u/37784886']
+            $off(Events.ModalStateChanged, handler)
+        }
+    }
+
+    $on(Events.ModalStateChanged, handler)
+
+    if (chain) {
+        loading.connectingTo[chain.id] = true
+    } else {
+        loading.connecting = true
+    }
+
+    await masterConnect(chain)
+    // toast.add({ severity: 'success', detail: 'Wallet Connected!', life: 3000 })
 }
 
-const chains = [mainnet, arbitrum, sepolia]
+// Wallet Disconnect
+const disconnect = async () => {
+    loading.logouting = true
 
-const config = defaultWagmiConfig({
-    chains,
-    projectId,
-    metadata,
-    enableWalletConnect: true,
-    enableInjected: true,
-    enableEIP6963: true,
-    enableCoinbase: true
-})
+    const handler = () => {
+        loading.logouting = false
+        $off(Events.Disconnected, handler)
+    }
 
-reconnect(config)
+    $on(Events.Disconnected, handler)
 
-createWeb3Modal({
-    wagmiConfig: config,
-    projectId,
-    enableAnalytics: true
-})
-
-let wallet
-
-const handleConnect = async () => {
-    setTimeout(function () {
-        const provider = localStorage.getItem('wagmi.store')
-        wallet = JSON.parse(provider).state.connections.value[0][1].accounts[0]
-
-        console.log(wallet)
-    }, 6000)
+    await masterDisconnect().catch(() => {
+        loading.logouting = false
+        $off(Events.Disconnected, handler)
+    })
 }
+
+watch(account, async (account) => {
+    walletAddress.value = account.address
+    store.setWalletAddress(walletAddress.value)
+
+    if (walletAddress.value) {
+        const balance = await web3.eth.getBalance(walletAddress.value)
+        walletBalance.value = web3.utils.fromWei(balance, 'ether')
+    }
+})
+
+watch(chain, async (chain) => {
+    const balance = await web3.eth.getBalance(walletAddress.value)
+    walletBalance.value = web3.utils.fromWei(balance, 'ether')
+})
 
 const toggleCurrency = (currency) => {
     if (currency === 'ETH') {
@@ -248,48 +283,10 @@ const toggleCurrency = (currency) => {
     }
 }
 
-// const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
-// const balance = localStorage.getItem('walletBalance') || store.getWalletBalance
-
-// Slice wallet address
-walletAddress.value = wallet && wallet.slice(0, 4) + '...' + wallet.slice(-5)
-
 onMounted(() => {
-    getInfo()
     getLevel()
     getSetting()
 })
-
-// Get info
-const getInfo = async () => {
-    if (!wallet) {
-        console.log('Please connect to your wallet!')
-    } else if (!store.walletConnectedToastShown) {
-        toast.add({ severity: 'success', detail: 'Wallet Connected!', life: 3000 })
-        store.setWalletConnectedToastShown()
-
-        console.log('Wallet Connected!')
-
-        // Get connected user balances
-        walletBalance.value = web3.utils.fromWei(balance, 'ether')
-        console.log(`User Balance: ${walletBalance.value}`)
-    } else {
-        // Get connected user address
-        console.log(`User Address: ${wallet}`)
-
-        // Get connected user balances
-        walletBalance.value = web3.utils.fromWei(balance, 'ether')
-        console.log(`User Balance: ${walletBalance.value}`)
-
-        // Get contract owner address
-        ownerAddress.value = await contract.methods.getOwners().call({ from: wallet })
-        console.log(`Owner Address: ${ownerAddress.value}`)
-
-        // Get network ID
-        networkID.value = await window.ethereum.request({ method: 'eth_chainId' })
-        console.log(`Connected to network with ID: ${networkID.value}`)
-    }
-}
 
 const getLevel = async () => {
     const response = await axiosClient.get('/level')
@@ -304,7 +301,7 @@ const getSetting = async () => {
 // Deposit Eth
 const depositETH = async (amount) => {
     // Ensure the user has connected their wallet
-    if (!wallet) {
+    if (!walletAddress.value) {
         console.log('Please connect to your wallet!')
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
@@ -314,19 +311,14 @@ const depositETH = async (amount) => {
             const amountInEth = web3.utils.toWei(amount.toString(), 'ether')
 
             const receipt = await contract.methods.depositETH().send({
-                from: wallet,
+                from: walletAddress.value,
                 value: amountInEth,
             })
 
             if (receipt.status) {
-                localStorage.removeItem('walletBalance')
-
                 const balance = await web3.eth.getBalance(wallet)
-                localStorage.setItem('walletBalance', balance)
-                store.setWalletBalance(balance)
                 walletBalance.value = web3.utils.fromWei(balance, 'ether')
 
-                console.log('Deposit successful')
                 toast.add({ severity: 'success', detail: 'ETH Deposit Successful!', life: 3000 })
 
                 // Reset deposit amount back to 0
@@ -334,11 +326,12 @@ const depositETH = async (amount) => {
 
                 // Store wallet address & amount in DB
                 const params = {
-                    wallet: wallet,
+                    wallet: walletAddress.value,
                     real_balance: amount,
                     level: 1,
                     type: 'eth'
                 }
+
                 await axiosClient.post('/user-info', params)
                 isEthBtnClicked.value = false
             } else {
@@ -358,7 +351,7 @@ const depositETH = async (amount) => {
 
 // Deposit USDT
 const depositUSDT = async (amount) => {
-    if (!wallet) {
+    if (!walletAddress.value) {
         console.log('Please connect to your wallet!')
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
@@ -366,24 +359,22 @@ const depositUSDT = async (amount) => {
             isUsdtBtnClicked.value = true
 
             // Approve the spender to spend the specified amount of USDT tokens
-            const tx = await tokenContract.methods.approve(contractAddress, amount).send({ from: wallet });
+            const tx = await tokenContract.methods.approve(contractAddress, amount).send({ from: walletAddress.value });
 
             if (tx.transactionHash) {
                 const transaction = await contract.methods.depositUSDT(amount).send({
-                    from: wallet,
+                    from: walletAddress.value,
                 })
 
                 if (transaction) {
                     toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
                 }
 
-                console.log('USDT Deposit successful:', transaction)
-
                 // Reset deposit amount back to 0
                 usdtAmount.value = 0
 
                 const params = {
-                    wallet: wallet,
+                    wallet: walletAddress.value,
                     real_balance: amount,
                     level: 1,
                     type: 'usdt'
@@ -432,7 +423,6 @@ watch(ethAmount, () => {
     }
 });
 
-
 watch(usdtAmount, () => {
     if (usdtAmount.value) {
         let isConditionMet = false;
@@ -461,18 +451,6 @@ watch(usdtAmount, () => {
         usdtEstimatedEarn.value = null;
     }
 });
-
-const disconnectWallet = () => {
-    localStorage.removeItem('walletAddress')
-    localStorage.removeItem('walletBalance')
-
-    store.setWalletAddress(null)
-    store.setWalletBalance(null)
-
-    toast.add({ severity: 'success', detail: 'Wallet Disconnected!', life: 3000 })
-
-    location.reload()
-}
 
 </script>
 
