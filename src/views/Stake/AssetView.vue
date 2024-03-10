@@ -119,6 +119,9 @@
 import { ref, onMounted } from 'vue'
 import Card from 'primevue/card'
 import axiosClient from '@/services/axiosClient'
+import { useStore } from '@/store/store.js'
+
+const store = useStore()
 
 const userStats = ref([])
 const ethStats = ref(null)
@@ -128,7 +131,7 @@ const frozenUsdt = ref(null)
 const availableEth = ref(null)
 const availableUsdt = ref(null)
 
-const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
+const wallet = store.getWalletAddress
 
 onMounted(() => {
     getUserStats()

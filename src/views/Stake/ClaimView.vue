@@ -82,7 +82,7 @@ const userStats = ref([])
 const availableUsdt = ref(null)
 const isClicked = ref(false)
 
-const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
+const wallet = store.getWalletAddress
 
 const state = reactive({
     wallet_address: null,

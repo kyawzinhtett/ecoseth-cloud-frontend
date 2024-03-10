@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="h-screen pb-2 text-sm md:text-base">
         <section class="mt-6 md:mt-3 mb-8">
             <router-link :to="{ name: 'home' }">
@@ -47,40 +47,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- <section class="md:flex md:mb-5 gap-5 md:gap-10">
-            <div class="hover:cursor-pointer w-full mb-3">
-                <div @click="connectMetamaskWallet"
-                    class="bg-tertiary rounded-md flex justify-between items-center px-6 py-4 md:px-10 md:py-5">
-                    <span class="text-xl md:text-2xl">Kraken</span>
-                    <img src="/kraken.svg" alt="Kraken" class="w-[40px] h-[40px]">
-                </div>
-            </div>
-            <div class="hover:cursor-pointer w-full mb-3">
-                <div @click="connectMetamaskWallet"
-                    class="bg-tertiary rounded-md flex justify-between items-center px-6 py-4 md:px-10 md:py-5">
-                    <span class="text-xl md:text-2xl">Bybit</span>
-                    <img src="/bybit.svg" alt="Bybit" class="w-[40px] h-[40px]">
-                </div>
-            </div>
-        </section> -->
-
-        <!-- <section class="md:flex md:mb-5 gap-5 md:gap-10">
-            <div class="hover:cursor-pointer w-full mb-3">
-                <div @click="connectBscWallet"
-                    class="bg-tertiary rounded-md flex justify-between items-center px-6 py-4 md:px-10 md:py-5">
-                    <span class="text-xl md:text-2xl">Binance</span>
-                    <img src="/binance.svg" alt="Binance" class="w-[40px] h-[40px]">
-                </div>
-            </div>
-            <div class="hover:cursor-pointer w-full mb-3">
-                <div @click="connectMetamaskWallet"
-                    class="bg-tertiary rounded-md flex justify-between items-center px-6 py-4 md:px-10 md:py-5">
-                    <span class="text-xl md:text-2xl">Crypto.com</span>
-                    <img src="/crypto.svg" alt="Crypto" class="w-[40px] h-[40px]">
-                </div>
-            </div>
-        </section> -->
 
         <Toast />
     </div>
@@ -207,4 +173,4 @@ const connectCoinbaseWallet = async () => {
 
 </script>
 
-<style scoped></style>
+<style scoped></style> -->
