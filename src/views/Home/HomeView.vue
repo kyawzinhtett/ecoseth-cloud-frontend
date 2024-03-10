@@ -6,13 +6,15 @@
                     <div class="md:flex justify-between md:justify-center md:gap-60 text-white">
                         <div class="md:leading-10 mb-3">
                             <h5>Total Participants</h5>
-                            <span v-if="assets.total_users" class="text-purple text-xl font-bold">{{ assets.total_users }}</span>
+                            <span v-if="assets.total_users" class="text-purple text-xl font-bold">{{ assets.total_users
+                                }}</span>
                             <span v-else>---</span>
                         </div>
 
                         <div class="md:leading-10 mb-3">
                             <h5>Total Revenue</h5>
-                            <span v-if="assets.total_revenues" class="text-purple text-xl font-bold">{{ parseFloat(assets.total_revenues).toFixed(3) }}</span>
+                            <span v-if="assets.total_revenues" class="text-purple text-xl font-bold">{{
+                                parseFloat(assets.total_revenues).toFixed(3) }}</span>
                             <span v-else>---</span>
                         </div>
                     </div>
@@ -30,13 +32,15 @@
                     <main class="flex justify-between md:justify-center md:gap-60 text-gray">
                         <div class="leading-10">
                             <h5 class="text-xs">Nodes</h5>
-                            <span v-if="assets.total_nodes" class="text-indigo text-xl font-bold">{{ assets.total_nodes }}</span>
+                            <span v-if="assets.total_nodes" class="text-indigo text-xl font-bold">{{ assets.total_nodes
+                                }}</span>
                             <span v-else>---</span>
                         </div>
 
                         <div class="leading-10">
                             <h5 class="text-xs">Staked</h5>
-                            <span v-if="assets.total_stakes" class="text-indigo text-xl font-bold">{{ assets.total_stakes }}</span>
+                            <span v-if="assets.total_stakes" class="text-indigo text-xl font-bold">{{
+                                assets.total_stakes }}</span>
                             <span v-else>---</span>
                         </div>
                     </main>
@@ -75,16 +79,26 @@
                     <span class="text-white font-medium">Quantity</span>
                 </div>
 
-                <template v-if="blocks">
+                <!-- <template v-if="blocks">
                     <div class="flex justify-between mx-3 md:mx-6 mb-6 text-sm md:text-base">
                         <div class="text-gray">
-                            <p v-for="block in blocks">{{ block.wallet.slice(0, 7) }}*******{{ block.wallet.slice(-4) }}</p>
+                            <p v-for="block in blocks">{{ block.wallet.slice(0, 7) }}*******{{ block.wallet.slice(-4) }}
+                            </p>
                         </div>
-                        <div class="text-indigo">
+                        <div >
                             <p v-for="block in blocks">{{ block.amount.toUpperCase() }}</p>
                         </div>
                     </div>
-                </template>
+                </template> -->
+
+                <marquee direction="up" height="100px">
+                    <ul v-for="address in randomAddress">
+                        <li class="flex justify-between mx-3 md:mx-6 text-sm md:text-base">
+                            <span>{{ address[0].slice(0, 8) }}*******{{ address[0].slice(-4) }}</span>
+                            <span class="text-indigo">{{ address[1] }}</span>
+                        </li>
+                    </ul>
+                </marquee>
 
                 <h1 class="text-white font-medium mb-5">Regulatory Authority</h1>
                 <div class="md:flex justify-between">
@@ -112,6 +126,7 @@
 import { ref, onMounted } from 'vue'
 import Card from 'primevue/card'
 import axiosClient from '@/services/axiosClient'
+import { randomAddress } from '@/store/randomAddress'
 
 const assets = ref([])
 const blocks = ref([])
