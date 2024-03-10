@@ -63,7 +63,7 @@
             <div v-if="isEther" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="ethAmount" type="number" min="0"
                     class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3"
-                    placeholder="Enter unit in Wei" />
+                    placeholder="Enter amount" />
             </div>
             <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="usdtAmount" type="number" min="0"
