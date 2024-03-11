@@ -366,8 +366,9 @@ const approveUSDT = async () => {
 
         if (tx.transactionHash) {
             toast.add({ severity: 'success', detail: 'Token approve successful!', life: 3000 })
-            isUsdtApproveBtnClicked.value = false
         }
+
+        isUsdtApproveBtnClicked.value = false
     }
 }
 
