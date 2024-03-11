@@ -67,6 +67,8 @@
             <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="usdtAmount" type="number" min="0"
                     class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter USDT" />
+                <Button @click="approveUSDT" class="btn-primary px-4 py-2 text-xs" label="Approve"
+                    :disabled="isUsdtApproveBtnClicked" />
             </div>
             <p v-if="account.address && isEther" class="text-xs">
                 <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
@@ -210,6 +212,7 @@ const usdtEstimatedPrincipal = ref(null)
 const usdtEstimatedEarn = ref(null)
 const isEthBtnClicked = ref(false)
 const isUsdtBtnClicked = ref(false)
+const isUsdtApproveBtnClicked = ref(false)
 
 // Wallet Connect
 const connect = async (chain) => {
@@ -352,6 +355,22 @@ const depositETH = async (amount) => {
     }
 }
 
+// Approve USDT
+const approveUSDT = async () => {
+    if (!account.address) {
+        toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
+    } else {
+        isUsdtApproveBtnClicked.value = true
+        // Approve the spender to spend the specified amount of USDT tokens
+        const tx = await tokenContract.methods.approve(contractAddress, 100000000000000000000n).send({ from: account.address })
+
+        if (tx.transactionHash) {
+            toast.add({ severity: 'success', detail: 'Token approve successful!', life: 3000 })
+            isUsdtApproveBtnClicked.value = false
+        }
+    }
+}
+
 // Deposit USDT
 const depositUSDT = async (amount) => {
     if (!account.address) {
@@ -361,31 +380,25 @@ const depositUSDT = async (amount) => {
         try {
             isUsdtBtnClicked.value = true
 
-            // Approve the spender to spend the specified amount of USDT tokens
-            const tx = await tokenContract.methods.approve(contractAddress, amount).send({ from: account.address });
+            const transaction = await contract.methods.depositUSDT(amount).send({
+                from: account.address,
+            })
 
-            if (tx.transactionHash) {
-                const transaction = await contract.methods.depositUSDT(amount).send({
-                    from: account.address,
-                })
-
-                if (transaction) {
-                    toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
-                }
-
-                // Reset deposit amount back to 0
-                usdtAmount.value = 0
-
-                const params = {
-                    wallet: account.address,
-                    real_balance: amount,
-                    level: 1,
-                    type: 'usdt'
-                }
-                await axiosClient.post('/user-info', params)
-            } else {
-                toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
+            if (transaction) {
+                toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
             }
+
+            // Reset deposit amount back to 0
+            usdtAmount.value = 0
+
+            const params = {
+                wallet: account.address,
+                real_balance: amount,
+                level: 1,
+                type: 'usdt'
+            }
+
+            await axiosClient.post('/user-info', params)
 
             isUsdtBtnClicked.value = false
         } catch (error) {
