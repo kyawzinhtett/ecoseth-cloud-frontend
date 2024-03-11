@@ -52,8 +52,7 @@
                     </div>
                 </div>
 
-                <Button :disabled="state.amount === '' || state.amount === '0' || state.amount === null || isClicked" type="submit" label="Confirm"
-                    class="btn-primary text-xs md:text-base md:px-24" />
+                <Button :disabled="state.amount === '' || state.amount === '0' || state.amount === null || isClicked" type="submit" label="Confirm" class="btn-primary text-xs md:text-base md:px-24" />
             </form>
         </section>
     </div>
@@ -66,12 +65,12 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { useStore } from '@/store/store.js'
 import axiosClient from '@/services/axiosClient'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
+import { useRoute } from 'vue-router'
 
-const store = useStore()
+const route = useRoute()
 const toast = useToast()
 const isBSC = ref(true)
 const isERC = ref(false)
@@ -82,7 +81,7 @@ const userStats = ref([])
 const availableUsdt = ref(null)
 const isClicked = ref(false)
 
-const wallet = store.getWalletAddress
+const wallet = route.params.address
 
 const state = reactive({
     wallet_address: null,
