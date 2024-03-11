@@ -77,11 +77,11 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { useStore } from '@/store/store.js'
+import { useRoute } from 'vue-router'
 import axiosClient from '@/services/axiosClient'
 
 const web3 = new Web3(window.ethereum)
-const store = useStore()
+const route = useRoute()
 const toast = useToast()
 const walletBalance = ref()
 const setting = ref([])
@@ -90,7 +90,7 @@ const usdtAmount = ref(0)
 const userStats = ref([])
 const isClicked = ref(false)
 
-const wallet = localStorage.getItem('walletAddress') || store.getWalletAddress
+const wallet = route.params.address
 
 onMounted(() => {
     getSetting()

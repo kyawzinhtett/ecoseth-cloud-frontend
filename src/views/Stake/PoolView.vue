@@ -12,7 +12,7 @@
             </template>
 
             <template v-else>
-                <router-link :to="{ name: 'asset' }">
+                <router-link :to="{ name: 'asset', params: { address: account.address } }">
                     <Button class="btn-primary px-2 py-2 text-white">
                         <div class="flex justify-center gap-3">
                             <span class="text-xs">{{ account.shortAddress }}</span>
@@ -62,14 +62,15 @@
             </div>
             <div v-if="isEther" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="ethAmount" type="number" min="0"
-                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3"
-                    placeholder="Enter amount" />
+                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter amount" />
             </div>
             <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="usdtAmount" type="number" min="0"
                     class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter USDT" />
+                <Button @click="approveUSDT" class="btn-primary px-4 py-2 text-xs" label="Approve"
+                    :disabled="isUsdtApproveBtnClicked" />
             </div>
-            <p v-if="walletAddress && isEther" class="text-xs">
+            <p v-if="account.address && isEther" class="text-xs">
                 <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
             </p>
         </section>
@@ -167,7 +168,6 @@ import InputText from 'primevue/inputtext'
 import Card from 'primevue/card'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { useStore } from '@/store/store.js'
 import { contractABI } from '@/contracts/contractConfig'
 import { tokenABI } from '@/contracts/tokenABI'
 import axiosClient from '@/services/axiosClient'
@@ -185,7 +185,6 @@ import {
 } from '@kolirt/vue-web3-auth'
 
 const toast = useToast()
-const store = useStore()
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
 const tokenAddress = import.meta.env.VITE_TOKEN_CONTRACT_ADDRESS
 const web3 = new Web3(window.ethereum)
@@ -200,7 +199,6 @@ const loading = reactive({
 })
 const levels = ref([])
 const setting = ref([])
-const walletAddress = ref('')
 const walletBalance = ref()
 const isEther = ref(true)
 const isUSDT = ref(false)
@@ -214,6 +212,7 @@ const usdtEstimatedPrincipal = ref(null)
 const usdtEstimatedEarn = ref(null)
 const isEthBtnClicked = ref(false)
 const isUsdtBtnClicked = ref(false)
+const isUsdtApproveBtnClicked = ref(false)
 
 // Wallet Connect
 const connect = async (chain) => {
@@ -259,18 +258,17 @@ const disconnect = async () => {
 }
 
 watch(account, async (account) => {
-    walletAddress.value = account.address
-    store.setWalletAddress(walletAddress.value)
-
-    if (walletAddress.value) {
-        const balance = await web3.eth.getBalance(walletAddress.value)
+    if (account.address) {
+        const balance = await web3.eth.getBalance(account.address)
         walletBalance.value = web3.utils.fromWei(balance, 'ether')
     }
 })
 
 watch(chain, async (chain) => {
-    const balance = await web3.eth.getBalance(walletAddress.value)
-    walletBalance.value = web3.utils.fromWei(balance, 'ether')
+    if (account.address) {
+        const balance = await web3.eth.getBalance(account.address)
+        walletBalance.value = web3.utils.fromWei(balance, 'ether')
+    }
 })
 
 const toggleCurrency = (currency) => {
@@ -284,9 +282,17 @@ const toggleCurrency = (currency) => {
 }
 
 onMounted(() => {
+    getWalletDetails()
     getLevel()
     getSetting()
 })
+
+const getWalletDetails = async () => {
+    if (account.address) {
+        const balance = await web3.eth.getBalance(account.address)
+        walletBalance.value = web3.utils.fromWei(balance, 'ether')
+    }
+}
 
 const getLevel = async () => {
     const response = await axiosClient.get('/level')
@@ -301,7 +307,7 @@ const getSetting = async () => {
 // Deposit Eth
 const depositETH = async (amount) => {
     // Ensure the user has connected their wallet
-    if (!walletAddress.value) {
+    if (!account.address) {
         console.log('Please connect to your wallet!')
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
@@ -311,12 +317,12 @@ const depositETH = async (amount) => {
             const amountInEth = web3.utils.toWei(amount.toString(), 'ether')
 
             const receipt = await contract.methods.depositETH().send({
-                from: walletAddress.value,
+                from: account.address,
                 value: amountInEth,
             })
 
             if (receipt.status) {
-                const balance = await web3.eth.getBalance(wallet)
+                const balance = await web3.eth.getBalance(account.address)
                 walletBalance.value = web3.utils.fromWei(balance, 'ether')
 
                 toast.add({ severity: 'success', detail: 'ETH Deposit Successful!', life: 3000 })
@@ -326,7 +332,7 @@ const depositETH = async (amount) => {
 
                 // Store wallet address & amount in DB
                 const params = {
-                    wallet: walletAddress.value,
+                    wallet: account.address,
                     real_balance: amount,
                     level: 1,
                     type: 'eth'
@@ -349,40 +355,51 @@ const depositETH = async (amount) => {
     }
 }
 
+// Approve USDT
+const approveUSDT = async () => {
+    if (!account.address) {
+        toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
+    } else {
+        isUsdtApproveBtnClicked.value = true
+        // Approve the spender to spend the specified amount of USDT tokens
+        const tx = await tokenContract.methods.approve(contractAddress, 100000000000000000000n).send({ from: account.address })
+
+        if (tx.transactionHash) {
+            toast.add({ severity: 'success', detail: 'Token approve successful!', life: 3000 })
+        }
+
+        isUsdtApproveBtnClicked.value = false
+    }
+}
+
 // Deposit USDT
 const depositUSDT = async (amount) => {
-    if (!walletAddress.value) {
+    if (!account.address) {
         console.log('Please connect to your wallet!')
         toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
     } else {
         try {
             isUsdtBtnClicked.value = true
 
-            // Approve the spender to spend the specified amount of USDT tokens
-            const tx = await tokenContract.methods.approve(contractAddress, amount).send({ from: walletAddress.value });
+            const transaction = await contract.methods.depositUSDT(amount).send({
+                from: account.address,
+            })
 
-            if (tx.transactionHash) {
-                const transaction = await contract.methods.depositUSDT(amount).send({
-                    from: walletAddress.value,
-                })
-
-                if (transaction) {
-                    toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
-                }
-
-                // Reset deposit amount back to 0
-                usdtAmount.value = 0
-
-                const params = {
-                    wallet: walletAddress.value,
-                    real_balance: amount,
-                    level: 1,
-                    type: 'usdt'
-                }
-                await axiosClient.post('/user-info', params)
-            } else {
-                toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
+            if (transaction) {
+                toast.add({ severity: 'success', detail: 'USDT Deposit successful!', life: 3000 })
             }
+
+            // Reset deposit amount back to 0
+            usdtAmount.value = 0
+
+            const params = {
+                wallet: account.address,
+                real_balance: amount,
+                level: 1,
+                type: 'usdt'
+            }
+
+            await axiosClient.post('/user-info', params)
 
             isUsdtBtnClicked.value = false
         } catch (error) {

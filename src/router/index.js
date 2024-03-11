@@ -18,23 +18,18 @@ const router = createRouter({
             name: 'pool',
             component: () => import('@/views/Stake/PoolView.vue')
         },
-        // {
-        //     path: '/wallet',
-        //     name: 'wallet',
-        //     component: () => import('@/views/Stake/WalletView.vue')
-        // },
         {
-            path: '/asset',
+            path: '/asset/:address',
             name: 'asset',
             component: () => import('@/views/Stake/AssetView.vue')
         },
         {
-            path: '/claim',
+            path: '/claim/:address',
             name: 'claim',
             component: () => import('@/views/Stake/ClaimView.vue')
         },
         {
-            path: '/swap',
+            path: '/swap/:address',
             name: 'swap',
             component: () => import('@/views/Stake/SwapView.vue')
         },
