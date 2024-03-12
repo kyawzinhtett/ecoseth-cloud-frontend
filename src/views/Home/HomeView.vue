@@ -13,8 +13,7 @@
 
                         <div class="md:leading-10 mb-3">
                             <h5>Total Revenue</h5>
-                            <span v-if="assets.total_revenues" class="text-purple text-xl font-bold">{{
-                                parseFloat(assets.total_revenues).toFixed(3) }}</span>
+                            <span v-if="assets.total_revenues" class="text-purple text-xl font-bold">{{ assets.total_revenues }}</span>
                             <span v-else>---</span>
                         </div>
                     </div>
