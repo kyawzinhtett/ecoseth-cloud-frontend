@@ -3,19 +3,12 @@
         <h1 class="bg-tertiary text-xl font-semibold rounded px-5 py-4 mb-3">Who We Are?</h1>
 
         <div class="p-5 mb-4">
-            <p class="text-sm md:text-base">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloribus incidunt exercitationem deleniti
-                necessitatibus obcaecati dolores aspernatur soluta nemo! Culpa ratione quos praesentium labore. Nulla cumque
-                fuga numquam neque quasi quos ratione amet, placeat provident voluptatibus perferendis commodi voluptas
-                dignissimos deleniti consectetur eligendi ipsa corporis quibusdam eius nemo ullam facere qui accusantium?
-                Officiis itaque illo minus, laboriosam at id a doloremque earum eos, necessitatibus asperiores? Modi sed et
-                error reprehenderit. Accusamus nisi exercitationem inventore consequuntur cum amet at quasi libero minima.
+            <p class="text-sm md:text-base">ACM is the world's first smart node cloud mining project on the chain launched by the ACM Foundation based on ERC2.0. It uses a cryptocurrency wallet to store USD tokens to participate in the DEFI project and is rewarded for providing effective nodes on the chain and liquidity data for decentralized smart cloud mines.
             </p>
 
             <br>
 
-            <p class="text-sm md:text-base">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem dolor at dolores illo exercitationem culpa hic
-                ducimus dolorem repellendus tenetur. Dolorem eum omnis repellat asperiores voluptate mollitia eius ipsa
-                vitae.</p>
+            <p class="text-sm md:text-base">Each miner can use any wallet and can generate a valid cloud node simply by proving that he or she holds encrypted assets, all of which automatically lock the node through smart contracts and then a share of DEFI revenue can received by contribution value. Through the liquidity node, the total revenue form mining will be automatically distributed by the number of USDT tokens through EUSM intelligent contracts.</p>
         </div>
 
         <h3 class="p-5 text-lg font-semibold mb-5">Our Business Partners</h3>
