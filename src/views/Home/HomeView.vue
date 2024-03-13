@@ -90,7 +90,7 @@
                     </div>
                 </template> -->
 
-                <marquee direction="up" height="50px" scrollamount="3">
+                <marquee direction="up" height="25px" scrollamount="2">
                     <ul v-for="address in randomAddress">
                         <li class="flex justify-between mx-3 md:mx-6 text-sm md:text-base">
                             <span>{{ address[0].slice(0, 8) }}*******{{ address[0].slice(-4) }}</span>
