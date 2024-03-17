@@ -16,6 +16,8 @@ coverage
 .env
 src/contracts/
 
+src/contracts/
+
 /cypress/videos/
 /cypress/screenshots/
 
