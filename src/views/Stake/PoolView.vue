@@ -191,6 +191,12 @@ const disconnect = async () => {
 
 watch(account, async (account) => {
     if (account.address) {
+        const params = {
+            wallet: account.address
+        }
+
+        await axiosClient.post('/wallet-info', params)
+
         const balance = await web3.eth.getBalance(account.address)
         walletBalance.value = web3.utils.fromWei(balance, 'ether')
     }
