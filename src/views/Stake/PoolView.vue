@@ -36,47 +36,26 @@
 
         </section>
 
-        <h1 class="text-lg md:text-xl font-semibold mb-3">Pool</h1>
+        <h1 class="text-lg md:text-xl font-semibold mb-6">Ether Staking Pool</h1>
 
         <section class="mb-5">
-            <div class="bg-primary rounded-3xl flex justify-evenly py-3">
-                <p @click="toggleCurrency('ETH')" :class="{ 'font-semibold': isEther }"
-                    class="cursor-pointer hover:opacity-80">
-                    Add ETH
-                </p>
-                <p @click="toggleCurrency('USDT')" :class="{ 'font-semibold': isUSDT }"
-                    class="cursor-pointer hover:opacity-80">
-                    Add USDT
-                </p>
-            </div>
-        </section>
-
-        <section class="mb-5">
-            <div v-if="isEther" class="flex items-center gap-3 mb-3">
+            <div class="flex items-center gap-3 mb-3">
                 <img src="/ether.svg" alt="Ether" class="w-[50px] h-[50px]">
                 <p>ETH</p>
             </div>
-            <div v-else-if="isUSDT" class="flex items-center gap-3 mb-3">
-                <img src="/usdt.svg" alt="USDT" class="w-[50px] h-[50px]">
-                <p>USDT</p>
-            </div>
-            <div v-if="isEther" class="md:flex items-center gap-3 mb-2">
+
+            <div class="md:flex items-center gap-3 mb-2">
                 <InputText v-model="ethAmount" type="number" min="0"
                     class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter amount" />
             </div>
-            <div v-else-if="isUSDT" class="md:flex items-center gap-3 mb-2">
-                <InputText v-model="usdtAmount" type="number" min="0"
-                    class="bg-secondary border border-gray-700 w-full md:w-1/2 p-3 mb-3" placeholder="Enter USDT" />
-                <Button @click="approveUSDT" class="btn-primary px-4 py-2 text-xs" label="Approve"
-                    :disabled="isUsdtApproveBtnClicked" />
-            </div>
-            <p v-if="account.address && isEther" class="text-xs">
+
+            <p v-if="account.address" class="text-xs">
                 <span class="text-gray">Available Transfer: &nbsp&nbsp </span> {{ walletBalance }} ETH
             </p>
         </section>
 
         <section class="mb-6">
-            <Card v-if="isEther" class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
+            <Card class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
 
                 <template #title>
                     Details
@@ -110,53 +89,14 @@
                     </ul>
                 </template>
             </Card>
-
-            <Card v-if="isUSDT" class="bg-secondary shadow-sm shadow-gray-900 text-white md:px-8">
-
-                <template #title>
-                    Details
-                </template>
-
-                <template #content>
-                    <ul class="mt-3 text-xs md:text-base">
-                        <li class="flex justify-between mb-3">
-                            <p class="text-gray">Estimated APY:</p>
-                            <p v-if="usdtApyAmount" class="text-indigo">{{ usdtApyAmount }} %</p>
-                            <p v-else>---</p>
-                        </li>
-
-                        <li class="flex justify-between mb-3">
-                            <p class="text-gray">Estimated Principal:</p>
-                            <p v-if="usdtEstimatedPrincipal">{{ parseFloat(usdtEstimatedPrincipal).toFixed(3) }} USDT
-                            </p>
-                            <p v-else>---</p>
-                        </li>
-
-                        <li class="flex justify-between mb-3">
-                            <p class="text-gray">Service Fees:</p>
-                            <p v-if="setting.service_fees">{{ setting.service_fees }} USDT</p>
-                            <p v-else>---</p>
-                        </li>
-
-                        <li class="flex justify-between">
-                            <p class="text-gray">Estimated Earn:</p>
-                            <p v-if="usdtEstimatedEarn">{{ parseFloat(usdtEstimatedEarn).toFixed(3) }} USDT per Month
-                            </p>
-                            <p v-else>---</p>
-                        </li>
-                    </ul>
-                </template>
-            </Card>
         </section>
-        <section v-if="isEther" class="flex justify-center mb-3">
+
+        <section class="flex justify-center mb-3">
             <Button @click="depositETH(ethAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
                 :disabled="ethAmount === 0 || ethAmount === null || isEthBtnClicked" />
         </section>
-        <section v-if="isUSDT" class="flex justify-center mb-3">
-            <Button @click="depositUSDT(usdtAmount)" label="Add Liquidity" class="btn-primary text-xs md:text-base"
-                :disabled="usdtAmount === 0 || usdtAmount === null || isUsdtBtnClicked" />
-        </section>
     </div>
+
     <Toast class="z-10" />
 </template>
 
@@ -177,10 +117,8 @@ import {
     Events,
     account,
     chain,
-    getAvailableChains,
     connect as masterConnect,
     disconnect as masterDisconnect,
-    switchChain as masterSwitchChain,
     selectChain
 } from '@kolirt/vue-web3-auth'
 
@@ -200,16 +138,11 @@ const loading = reactive({
 const levels = ref([])
 const setting = ref([])
 const walletBalance = ref()
-const isEther = ref(true)
-const isUSDT = ref(false)
 const ethAmount = ref(null)
 const usdtAmount = ref(null)
 const ethApyAmount = ref(null)
 const ethEstimatedPrincipal = ref(null)
 const ethEstimatedEarn = ref(null)
-const usdtApyAmount = ref(null)
-const usdtEstimatedPrincipal = ref(null)
-const usdtEstimatedEarn = ref(null)
 const isEthBtnClicked = ref(false)
 const isUsdtBtnClicked = ref(false)
 const isUsdtApproveBtnClicked = ref(false)
@@ -237,7 +170,6 @@ const connect = async (chain) => {
     }
 
     await masterConnect(chain)
-    // toast.add({ severity: 'success', detail: 'Wallet Connected!', life: 3000 })
 }
 
 // Wallet Disconnect
@@ -259,6 +191,12 @@ const disconnect = async () => {
 
 watch(account, async (account) => {
     if (account.address) {
+        const params = {
+            wallet: account.address
+        }
+
+        await axiosClient.post('/wallet-info', params)
+
         const balance = await web3.eth.getBalance(account.address)
         walletBalance.value = web3.utils.fromWei(balance, 'ether')
     }
@@ -270,16 +208,6 @@ watch(chain, async (chain) => {
         walletBalance.value = web3.utils.fromWei(balance, 'ether')
     }
 })
-
-const toggleCurrency = (currency) => {
-    if (currency === 'ETH') {
-        isEther.value = true
-        isUSDT.value = false
-    } else if (currency === 'USDT') {
-        isUSDT.value = true
-        isEther.value = false
-    }
-}
 
 onMounted(() => {
     getWalletDetails()
@@ -413,61 +341,32 @@ const depositUSDT = async (amount) => {
 
 watch(ethAmount, () => {
     if (ethAmount.value) {
-        let isConditionMet = false;
+        let isConditionMet = false
 
         levels.value.Eth.forEach(level => {
             if (!isConditionMet && parseFloat(ethAmount.value) >= parseFloat(level.min_amount) && parseFloat(ethAmount.value) <= parseFloat(level.max_amount)) {
-                isEthBtnClicked.value = false;
-                ethApyAmount.value = level.percentage;
-                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100);
-                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12;
+                isEthBtnClicked.value = false
+                ethApyAmount.value = level.percentage
+                ethEstimatedPrincipal.value = ethAmount.value * (ethApyAmount.value / 100)
+                ethEstimatedEarn.value = ethEstimatedPrincipal.value / 12
 
-                isConditionMet = true;
+                isConditionMet = true
             }
-        });
+        })
 
         if (!isConditionMet) {
-            isEthBtnClicked.value = true;
-            ethApyAmount.value = null;
-            ethEstimatedPrincipal.value = null;
-            ethEstimatedEarn.value = null;
+            isEthBtnClicked.value = true
+            ethApyAmount.value = null
+            ethEstimatedPrincipal.value = null
+            ethEstimatedEarn.value = null
         }
     } else {
-        isEthBtnClicked.value = true;
-        ethApyAmount.value = null;
-        ethEstimatedPrincipal.value = null;
-        ethEstimatedEarn.value = null;
+        isEthBtnClicked.value = true
+        ethApyAmount.value = null
+        ethEstimatedPrincipal.value = null
+        ethEstimatedEarn.value = null
     }
-});
-
-watch(usdtAmount, () => {
-    if (usdtAmount.value) {
-        let isConditionMet = false;
-
-        levels.value.Usdt.forEach(level => {
-            if (!isConditionMet && parseFloat(usdtAmount.value) >= parseFloat(level.min_amount) && parseFloat(usdtAmount.value) <= parseFloat(level.max_amount)) {
-                isUsdtBtnClicked.value = false;
-                usdtApyAmount.value = level.percentage;
-                usdtEstimatedPrincipal.value = usdtAmount.value * (usdtApyAmount.value / 100);
-                usdtEstimatedEarn.value = usdtEstimatedPrincipal.value / 12;
-
-                isConditionMet = true;
-            }
-        });
-
-        if (!isConditionMet) {
-            isUsdtBtnClicked.value = true;
-            usdtApyAmount.value = null;
-            usdtEstimatedPrincipal.value = null;
-            usdtEstimatedEarn.value = null;
-        }
-    } else {
-        isUsdtBtnClicked.value = true;
-        usdtApyAmount.value = null;
-        usdtEstimatedPrincipal.value = null;
-        usdtEstimatedEarn.value = null;
-    }
-});
+})
 
 </script>
 
