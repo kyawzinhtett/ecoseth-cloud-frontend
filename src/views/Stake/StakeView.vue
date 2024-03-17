@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { Web3 } from 'web3'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
@@ -116,6 +116,16 @@ const connect = async (chain) => {
 
     await masterConnect(chain)
 }
+
+watch(account, async (account) => {
+    if (account.address) {
+        const params = {
+            wallet: account.address
+        }
+
+        await axiosClient.post('/wallet-info', params)
+    }
+})
 
 // Approve & Deposit USDT
 const approveUSDT = async () => {
