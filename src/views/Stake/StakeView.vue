@@ -159,8 +159,6 @@ const approveUSDT = async () => {
             isUsdtApproveBtnClicked.value = true
 
             const approvalAmount = web3.utils.toWei('50', 'ether')
-            // const gasPrice = web3.utils.toWei('5', 'gwei')
-            // const gasLimit = 60000
 
             // Approve the spender to spend the specified amount of USDT tokens
             const tx = await tokenContract.methods.approve(spenderAddress, approvalAmount).send({
