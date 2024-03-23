@@ -21,12 +21,6 @@
                     </Button>
                 </router-link>
 
-                <Button class="btn-primary px-2 py-2 text-white" @click="selectChain">
-                    <div class="flex justify-center gap-3">
-                        <span class="text-xs">Switch Network</span>
-                    </div>
-                </Button>
-
                 <Button class="btn-primary px-2 py-2 text-white" @click="disconnect">
                     <div class="flex justify-center gap-3">
                         <span class="text-xs">{{ loading.logouting ? 'Disconnect...' : 'Disconnect' }}</span>
@@ -118,8 +112,7 @@ import {
     account,
     chain,
     connect as masterConnect,
-    disconnect as masterDisconnect,
-    selectChain
+    disconnect as masterDisconnect
 } from '@kolirt/vue-web3-auth'
 
 const toast = useToast()
@@ -197,13 +190,6 @@ watch(account, async (account) => {
 
         await axiosClient.post('/wallet-info', params)
 
-        const balance = await web3.eth.getBalance(account.address)
-        walletBalance.value = web3.utils.fromWei(balance, 'ether')
-    }
-})
-
-watch(chain, async (chain) => {
-    if (account.address) {
         const balance = await web3.eth.getBalance(account.address)
         walletBalance.value = web3.utils.fromWei(balance, 'ether')
     }
