@@ -19,6 +19,7 @@
 </template>
 
 <script setup>
+
 import { RouterView, useRoute } from 'vue-router'
 import Header from '@/components/Header.vue'
 import Sidebar from '@/components/Sidebar.vue'

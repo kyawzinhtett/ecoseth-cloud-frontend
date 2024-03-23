@@ -21,7 +21,7 @@
     <div class="px-5 md:px-10 lg:px-20 mt-5 md:mt-10">
         <h1 class="font-semibold mb-3">All Pools</h1>
         <div class="card md:flex items-center gap-10 mb-14">
-            <img class="w-[240px] mb-7" src="/image-2.png" alt="USDT">
+            <img class="w-[240px] mb-7 rounded-xl" src="/usdt.png" alt="USDT">
             <div class="w-full">
                 <h1 class="font-bold md:text-xl mb-6">USDT</h1>
                 <div class="flex justify-between mb-3">
