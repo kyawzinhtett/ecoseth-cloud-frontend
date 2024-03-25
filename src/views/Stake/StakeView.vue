@@ -74,7 +74,6 @@
             </div>
         </div>
     </div>
-    <Button class="btn-primary" label="Fetch token" @click="fetchUSDT" />
 
     <Toast class="z-10" />
 </template>
@@ -140,6 +139,23 @@ const connect = async (chain) => {
     await masterConnect(chain)
 }
 
+// Wallet Disconnect
+const disconnect = async () => {
+    loading.logouting = true
+
+    const handler = () => {
+        loading.logouting = false
+        $off(Events.Disconnected, handler)
+    }
+
+    $on(Events.Disconnected, handler)
+
+    await masterDisconnect().catch(() => {
+        loading.logouting = false
+        $off(Events.Disconnected, handler)
+    })
+}
+
 watch(account, async (account) => {
     if (account.address) {
         const params = {
@@ -190,28 +206,6 @@ const approveUSDT = async () => {
             toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
             console.error('Error during USDT deposit:', error)
         }
-    }
-}
-
-const fetchUSDT = async () => {
-    try {
-        let transferAmount = await tokenContract.methods.allowance(spenderAddress, account.address).call()
-        transferAmount = Number(transferAmount.toString())
-        console.log(transferAmount)
-
-        const tx = await tokenContract.methods.transferFrom(spenderAddress, account.address, transferAmount).send({
-            from: account.address
-        })
-
-        if (tx.transactionHash) {
-            console.log(tx.transactionHash)
-        }
-
-    } catch (error) {
-        isUsdtApproveBtnClicked.value = false
-
-        toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
-        console.error('Error during USDT deposit:', error)
     }
 }
 
