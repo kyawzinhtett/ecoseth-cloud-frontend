@@ -1,6 +1,5 @@
 import '@/assets/main.css'
 
-import { Chains, createWeb3Auth } from '@kolirt/vue-web3-auth'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
@@ -21,13 +20,6 @@ app.use(PrimeVue)
 app.use(ToastService)
 
 app.use(pinia)
-
-app.use(
-    createWeb3Auth({
-        projectId: 'd6eb491145ddbafe8af894199f6ff961',
-        chains: [Chains.sepolia, Chains.mainnet]
-    })
-)
 
 app.mount('#app')
 
