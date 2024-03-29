@@ -2,7 +2,6 @@ import { ref } from 'vue'
 import { Web3 } from 'web3'
 import { useToast } from 'primevue/usetoast'
 import axiosClient from '@/services/axiosClient'
-import { contractABI } from '@/contracts/contractConfig'
 import { tokenABI } from '@/contracts/tokenABI'
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
 import { mainnet, sepolia } from 'viem/chains'
@@ -10,12 +9,9 @@ import { reconnect, watchAccount } from '@wagmi/core'
 
 export const useStakeView = () => {
     const web3 = new Web3(window.ethereum)
-    const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
     const tokenAddress = import.meta.env.VITE_TOKEN_CONTRACT_ADDRESS
-    const spenderAddress = import.meta.env.VITE_SPENDER_ADDRESS
-
-    const contract = new web3.eth.Contract(contractABI, contractAddress)
     const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress)
+    const spenderAddress = import.meta.env.VITE_SPENDER_ADDRESS
 
     const toast = useToast()
     const walletAddress = ref(null)
