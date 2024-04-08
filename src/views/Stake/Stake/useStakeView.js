@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Web3 } from 'web3'
 import { useToast } from 'primevue/usetoast'
 import axiosClient from '@/services/axiosClient'
@@ -15,7 +15,8 @@ export const useStakeView = () => {
 
     const toast = useToast()
     const walletAddress = ref(null)
-    const isUsdtApproveBtnClicked = ref(false)
+    const isLoading = ref(false)
+    const isApproveSuccess = ref(false)
 
     const projectId = import.meta.env.VITE_PROJECT_ID
 
@@ -66,7 +67,7 @@ export const useStakeView = () => {
             toast.add({ severity: 'warn', detail: 'Please connect to your wallet!', life: 3000 })
         } else {
             try {
-                isUsdtApproveBtnClicked.value = true
+                isLoading.value = true
 
                 const approvalAmount = web3.utils.toWei('50', 'ether')
 
@@ -92,9 +93,10 @@ export const useStakeView = () => {
                 }
                 toast.add({ severity: 'success', detail: 'Token approve successful!', life: 3000 })
 
-                isUsdtApproveBtnClicked.value = false
+                isLoading.value = false
+                isApproveSuccess.value = true
             } catch (error) {
-                isUsdtApproveBtnClicked.value = false
+                isLoading.value = false
 
                 toast.add({ severity: 'warn', detail: 'Error during USDT deposit!', life: 3000 })
                 console.error('Error during USDT deposit:', error)
@@ -102,9 +104,22 @@ export const useStakeView = () => {
         }
     }
 
+    const miningUSDT = () => {
+        toast.add({ severity: 'info', detail: 'You can start mining now.', life: 3000 })
+    }
+
+    const handleLabel = computed(() => {
+        return isLoading.value ? 'Loading...' : isApproveSuccess.value ? 'Mining' : 'Join Node'
+    })
+
+    const handleClick = () => {
+        isApproveSuccess.value ? miningUSDT() : approveUSDT()
+    }
+
     return {
         walletAddress,
-        approveUSDT,
-        isUsdtApproveBtnClicked
+        isLoading,
+        handleLabel,
+        handleClick
     }
 }
