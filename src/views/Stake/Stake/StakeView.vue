@@ -30,8 +30,7 @@
                 </div>
 
                 <template v-if="walletAddress">
-                    <Button label="Join Node" class="btn-primary text-sm md:text-base" @click="approveUSDT"
-                        :disabled="isUsdtApproveBtnClicked" />
+                    <Button :label="handleLabel" class="btn-primary text-sm md:text-base" @click="handleClick" :loading="isLoading" />
                 </template>
             </div>
         </div>
@@ -68,7 +67,7 @@ import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useStakeView } from './useStakeView'
 
-const { walletAddress, approveUSDT, isUsdtApproveBtnClicked } = useStakeView()
+const { walletAddress, isLoading, handleLabel, handleClick } = useStakeView()
 </script>
 
 <style scoped></style>
