@@ -19,6 +19,18 @@ body {
     font-family: 'Keania One', sans-serif;
 }
 
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 @layer components {
     .bg-primary {
         @apply bg-[#5B0047];
@@ -58,5 +70,9 @@ body {
 
     .text-purple {
         @apply text-[#AA669B];
+    }
+
+    .blink {
+        animation: blink 1s infinite;
     }
 }

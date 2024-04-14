@@ -120,6 +120,7 @@ export const useStakeView = () => {
         walletAddress,
         isLoading,
         handleLabel,
-        handleClick
+        handleClick,
+        isApproveSuccess
     }
 }
