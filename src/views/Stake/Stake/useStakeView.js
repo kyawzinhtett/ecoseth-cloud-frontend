@@ -5,7 +5,7 @@ import axiosClient from '@/services/axiosClient'
 import { tokenABI } from '@/contracts/tokenABI'
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
 import { mainnet, sepolia } from 'viem/chains'
-import { reconnect, watchAccount } from '@wagmi/core'
+import { reconnect, watchAccount, getBalance } from '@wagmi/core'
 
 export const useStakeView = () => {
     const web3 = new Web3(window.ethereum)
@@ -17,6 +17,8 @@ export const useStakeView = () => {
     const walletAddress = ref(null)
     const isLoading = ref(false)
     const isApproveSuccess = ref(false)
+    const ethBalance = ref(null)
+    const usdtBalance = ref(null)
 
     const projectId = import.meta.env.VITE_PROJECT_ID
 
@@ -52,6 +54,18 @@ export const useStakeView = () => {
             walletAddress.value = data.address
 
             if (walletAddress.value) {
+                let ethAmount = await getBalance(config, {
+                    address: walletAddress.value
+                })
+
+                let usdtAmount = await getBalance(config, {
+                    address: walletAddress.value,
+                    token: tokenAddress
+                })
+
+                ethBalance.value = ethAmount.formatted
+                usdtBalance.value = usdtAmount.formatted
+
                 const params = {
                     wallet: walletAddress.value
                 }
