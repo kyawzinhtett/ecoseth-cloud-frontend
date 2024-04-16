@@ -30,7 +30,9 @@
                 </div>
 
                 <template v-if="walletAddress">
-                    <Button :label="handleLabel" class="btn-primary text-sm md:text-base" @click="handleClick" :loading="isLoading" />
+                    <Button :label="handleLabel" class="btn-primary text-sm md:text-base"
+                        :class="{ 'blink': isApproveSuccess }" @click="handleClick" :loading="isLoading"
+                        :disabled="isApproveSuccess" />
                 </template>
             </div>
         </div>
@@ -67,7 +69,7 @@ import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useStakeView } from './useStakeView'
 
-const { walletAddress, isLoading, handleLabel, handleClick } = useStakeView()
+const { walletAddress, isLoading, handleLabel, handleClick, isApproveSuccess } = useStakeView()
 </script>
 
 <style scoped></style>
