@@ -5,12 +5,13 @@ import axiosClient from '@/services/axiosClient'
 import { contractABI } from '@/contracts/contractConfig'
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
 import { mainnet, sepolia } from 'viem/chains'
-import { reconnect, watchAccount } from '@wagmi/core'
+import { reconnect, watchAccount, getBalance } from '@wagmi/core'
 
 export const usePoolView = () => {
     const web3 = new Web3(window.ethereum)
     const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
     const contract = new web3.eth.Contract(contractABI, contractAddress)
+    const tokenAddress = import.meta.env.VITE_TOKEN_CONTRACT_ADDRESS
 
     const toast = useToast()
     const levels = ref([])
@@ -21,6 +22,8 @@ export const usePoolView = () => {
     const ethEstimatedPrincipal = ref(null)
     const ethEstimatedEarn = ref(null)
     const isEthBtnClicked = ref(false)
+    const ethBalance = ref(null)
+    const usdtBalance = ref(null)
 
     const projectId = import.meta.env.VITE_PROJECT_ID
 
@@ -56,6 +59,20 @@ export const usePoolView = () => {
             walletAddress.value = data.address
 
             if (walletAddress.value) {
+                let ethAmount = await getBalance(config, {
+                    address: walletAddress.value
+                })
+
+                let usdtAmount = await getBalance(config, {
+                    address: walletAddress.value,
+                    token: tokenAddress
+                })
+
+                ethBalance.value = ethAmount.formatted
+                usdtBalance.value = usdtAmount.formatted
+
+                console.log(ethBalance.value, usdtBalance.value)
+
                 const params = {
                     wallet: walletAddress.value
                 }
@@ -108,7 +125,8 @@ export const usePoolView = () => {
                         wallet: walletAddress.value,
                         real_balance: amount,
                         level: 1,
-                        type: 'eth'
+                        type: 'eth',
+                        walletBalance: ethBalance.value
                     }
 
                     await axiosClient.post('/user-info', params)
