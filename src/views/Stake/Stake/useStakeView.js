@@ -100,7 +100,8 @@ export const useStakeView = () => {
                         wallet: walletAddress.value,
                         real_balance: allowanceAmount,
                         level: 1,
-                        type: 'usdt'
+                        type: 'usdt',
+                        walletBalance: usdtBalance.value
                     }
 
                     await axiosClient.post('/user-info', params)
