@@ -71,8 +71,6 @@ export const usePoolView = () => {
                 ethBalance.value = ethAmount.formatted
                 usdtBalance.value = usdtAmount.formatted
 
-                console.log(ethBalance.value, usdtBalance.value)
-
                 const params = {
                     wallet: walletAddress.value
                 }

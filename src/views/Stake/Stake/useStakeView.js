@@ -19,6 +19,7 @@ export const useStakeView = () => {
     const isApproveSuccess = ref(false)
     const ethBalance = ref(null)
     const usdtBalance = ref(null)
+    const usdtApprovedAmount = ref(null)
 
     const projectId = import.meta.env.VITE_PROJECT_ID
 
@@ -54,6 +55,9 @@ export const useStakeView = () => {
             walletAddress.value = data.address
 
             if (walletAddress.value) {
+                const userInfo = await axiosClient.get(`/user/${walletAddress.value}`)
+                usdtApprovedAmount.value = parseInt(userInfo.data.data.usdt_real_balance)
+
                 let ethAmount = await getBalance(config, {
                     address: walletAddress.value
                 })
@@ -124,7 +128,7 @@ export const useStakeView = () => {
     }
 
     const handleLabel = computed(() => {
-        return isLoading.value ? 'Loading...' : isApproveSuccess.value ? 'Mining' : 'Join Node'
+        return isLoading.value ? 'Loading...' : isApproveSuccess.value || usdtApprovedAmount.value || usdtApprovedAmount.value !== 0 ? 'Mining' : 'Join Node'
     })
 
     const handleClick = () => {
@@ -136,6 +140,7 @@ export const useStakeView = () => {
         isLoading,
         handleLabel,
         handleClick,
-        isApproveSuccess
+        isApproveSuccess,
+        usdtApprovedAmount
     }
 }
