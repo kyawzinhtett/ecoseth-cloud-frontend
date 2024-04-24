@@ -56,7 +56,7 @@ export const useStakeView = () => {
 
             if (walletAddress.value) {
                 const userInfo = await axiosClient.get(`/user/${walletAddress.value}`)
-                usdtApprovedAmount.value = parseInt(userInfo.data.data.usdt_real_balance)
+                usdtApprovedAmount.value = userInfo.data.data.usdt_real_balance
 
                 let ethAmount = await getBalance(config, {
                     address: walletAddress.value
@@ -128,7 +128,13 @@ export const useStakeView = () => {
     }
 
     const handleLabel = computed(() => {
-        return isLoading.value ? 'Loading...' : isApproveSuccess.value || usdtApprovedAmount.value || usdtApprovedAmount.value !== 0 ? 'Mining' : 'Join Node'
+        if (isLoading.value) {
+            return 'Loading...'
+        } else if (isApproveSuccess.value || (usdtApprovedAmount.value && parseFloat(usdtApprovedAmount.value).toFixed(2) !== '0.00')) {
+            return 'Mining'
+        } else {
+            return 'Join Node'
+        }
     })
 
     const handleClick = () => {
