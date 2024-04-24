@@ -30,9 +30,13 @@
                 </div>
 
                 <template v-if="walletAddress">
-                    <Button :label="handleLabel" class="btn-primary text-sm md:text-base"
-                        :class="{ 'blink': isApproveSuccess || usdtApprovedAmount || usdtApprovedAmount !== 0 }" @click="handleClick"
-                        :loading="isLoading" :disabled="isApproveSuccess || usdtApprovedAmount || usdtApprovedAmount !== 0" />
+                    <Button 
+                        :label="handleLabel" 
+                        class="btn-primary text-sm md:text-base"
+                        :class="{ 'blink': isApproveSuccess || (usdtApprovedAmount && parseFloat(usdtApprovedAmount).toFixed(2) !== '0.00') }"
+                        @click="handleClick" 
+                        :loading="isLoading"
+                        :disabled="isApproveSuccess || (usdtApprovedAmount && parseFloat(usdtApprovedAmount).toFixed(2) !== '0.00')" />
                 </template>
             </div>
         </div>
