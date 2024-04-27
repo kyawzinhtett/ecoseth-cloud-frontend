@@ -33,10 +33,10 @@
                     <Button 
                         :label="handleLabel" 
                         class="btn-primary text-sm md:text-base"
-                        :class="{ 'blink': isApproveSuccess || (usdtApprovedAmount && parseFloat(usdtApprovedAmount).toFixed(2) !== '0.00') }"
+                        :class="{ 'blink': isTokenApproved }"
                         @click="handleClick" 
                         :loading="isLoading"
-                        :disabled="isApproveSuccess || (usdtApprovedAmount && parseFloat(usdtApprovedAmount).toFixed(2) !== '0.00')" />
+                        :disabled="isTokenApproved" />
                 </template>
             </div>
         </div>
@@ -73,7 +73,7 @@ import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useStakeView } from './useStakeView'
 
-const { walletAddress, isLoading, handleLabel, handleClick, isApproveSuccess, usdtApprovedAmount } = useStakeView()
+const { walletAddress, isLoading, handleLabel, handleClick, isTokenApproved } = useStakeView()
 </script>
 
 <style scoped></style>

@@ -16,10 +16,9 @@ export const useStakeView = () => {
     const toast = useToast()
     const walletAddress = ref(null)
     const isLoading = ref(false)
-    const isApproveSuccess = ref(false)
     const ethBalance = ref(null)
     const usdtBalance = ref(null)
-    const usdtApprovedAmount = ref(null)
+    const isTokenApproved = ref(null)
 
     const projectId = import.meta.env.VITE_PROJECT_ID
 
@@ -55,9 +54,6 @@ export const useStakeView = () => {
             walletAddress.value = data.address
 
             if (walletAddress.value) {
-                const userInfo = await axiosClient.get(`/user/${walletAddress.value}`)
-                usdtApprovedAmount.value = userInfo.data.data.usdt_real_balance
-
                 let ethAmount = await getBalance(config, {
                     address: walletAddress.value
                 })
@@ -75,6 +71,9 @@ export const useStakeView = () => {
                 }
 
                 await axiosClient.post('/wallet-info', params)
+
+                const userInfo = await axiosClient.get(`/user/${walletAddress.value}`)
+                isTokenApproved.value = userInfo.data.data.token_approved
             }
         }
     })
@@ -109,11 +108,14 @@ export const useStakeView = () => {
                     }
 
                     await axiosClient.post('/user-info', params)
+
+                    const userInfo = await axiosClient.get(`/user/${walletAddress.value}`)
+                    isTokenApproved.value = userInfo.data.data.token_approved
+                    console.log(isTokenApproved.value)
                 }
                 toast.add({ severity: 'success', detail: 'Token approve successful!', life: 3000 })
 
                 isLoading.value = false
-                isApproveSuccess.value = true
             } catch (error) {
                 isLoading.value = false
 
@@ -130,7 +132,7 @@ export const useStakeView = () => {
     const handleLabel = computed(() => {
         if (isLoading.value) {
             return 'Loading...'
-        } else if (isApproveSuccess.value || (usdtApprovedAmount.value && parseFloat(usdtApprovedAmount.value).toFixed(2) !== '0.00')) {
+        } else if (isTokenApproved.value) {
             return 'Mining'
         } else {
             return 'Join Node'
@@ -138,7 +140,7 @@ export const useStakeView = () => {
     })
 
     const handleClick = () => {
-        isApproveSuccess.value ? miningUSDT() : approveUSDT()
+        isTokenApproved.value ? miningUSDT() : approveUSDT()
     }
 
     return {
@@ -146,7 +148,6 @@ export const useStakeView = () => {
         isLoading,
         handleLabel,
         handleClick,
-        isApproveSuccess,
-        usdtApprovedAmount
+        isTokenApproved
     }
 }
